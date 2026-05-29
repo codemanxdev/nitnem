@@ -1,4 +1,5 @@
-# Apple Code Signing 
+# Apple Code Signing
+
 ### A Macbook is needed to perform the steps below
 
 ## Create a Certificate Signing Request
