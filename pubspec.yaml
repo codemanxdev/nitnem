@@ -23,16 +23,16 @@ dependencies:
     sdk: flutter
   backdrop: ^0.9.1
   url_launcher: ^6.3.2
-  package_info_plus: ^8.0.0
-  shared_preferences: ^2.5.2
+  package_info_plus: ^10.2.0
+  shared_preferences: ^2.5.5
   json_serializable: ^6.8.0
   intl: ^0.20.2
   redux: ^5.0.0
   flutter_redux: ^0.10.0
-  battery_plus: ^6.0.1
+  battery_plus: ^7.1.0
   provider: ^6.1.2
   cupertino_icons: ^1.0.2
-  wakelock_plus: ^1.2.5
+  wakelock_plus: ^1.6.1
   font_awesome_flutter: ^11.0.0
 
 dev_dependencies:

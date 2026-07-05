@@ -1,6 +1,5 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -30,7 +29,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.manpreet.nitnem"
-    compileSdkVersion 35
+    compileSdkVersion 36
 
     lintOptions {
         disable 'InvalidPackage'
@@ -41,14 +40,15 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+
     kotlinOptions {
-        jvmTarget=17
+        jvmTarget = "17"
     }
 
     defaultConfig {
         applicationId "com.manpreet.nitnem"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
