@@ -48,8 +48,8 @@ class AppConstants {
 
   //Others
   static const String FEEDBACK_URL =
-      'https://github.com/geekymon2/nitnem/issues/new';
-  static const String CONTACT_EMAIL = 'geekymon2@gmail.com';
+      'https://github.com/codemanxdev/nitnem/issues/new';
+  static const String CONTACT_EMAIL = 'codemanxdev@gmail.com';
   static const String OPTIONS_SHAREDPREF_KEY = 'OPTIONS';
   static const double OPTIONS_SUBTITLE_FONT_SIZE = 10.0;
   static const int DEVICE_SMALL_RES = 320;

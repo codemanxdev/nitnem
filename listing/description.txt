@@ -30,4 +30,4 @@ Other features of Nitnem App.
 * Keep screen awake.
 * Statusbar to display time, battery and scroll position.
 
-Nitnem App sewa bhul chuk maaf, for any correction, suggestions or feedback please contact at geekymon2@gmail.com.
+Nitnem App sewa bhul chuk maaf, for any correction, suggestions or feedback please contact at codemanxdev@gmail.com.
