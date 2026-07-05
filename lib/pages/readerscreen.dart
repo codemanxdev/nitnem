@@ -211,7 +211,7 @@ class _MyReaderPageState extends State<ReaderScreen> {
                             isDark ? kFlutterBlue : theme.primaryColor,
                         actions: <Widget>[
                           IconButton(
-                            icon: Icon(FontAwesomeIcons.sliders),
+                            icon: FaIcon(FontAwesomeIcons.sliders),
 
                             onPressed: vm.onToggleReaderOptions,
                           ),

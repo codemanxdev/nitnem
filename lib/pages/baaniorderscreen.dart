@@ -35,7 +35,7 @@ class BaaniOrderScreen extends StatelessWidget {
           fontWeight: FontWeight.w700,
         ),
       ),
-      trailing: Icon(FontAwesomeIcons.bars),
+      trailing: FaIcon(FontAwesomeIcons.bars),
       subtitle: Text(
         item.gurmukhi,
         style: new TextStyle(
@@ -71,17 +71,17 @@ class BaaniOrderScreen extends StatelessWidget {
               onPressed: () {
                 AppNavigator.goBack(context);
               },
-              icon: Icon(FontAwesomeIcons.leftLong),
+              icon: FaIcon(FontAwesomeIcons.leftLong),
             ),
             actions: <Widget>[
               IconButton(
-                icon: Icon(FontAwesomeIcons.rotateLeft),
+                icon: FaIcon(FontAwesomeIcons.rotateLeft),
                 onPressed: () {
                   vm.onOrderResetAction(context);
                 },
               ),
               IconButton(
-                icon: Icon(FontAwesomeIcons.circleCheck),
+                icon: FaIcon(FontAwesomeIcons.circleCheck),
                 onPressed: () {
                   vm.onOrderSaveAction(context);
                 },
@@ -91,7 +91,7 @@ class BaaniOrderScreen extends StatelessWidget {
           body: Scrollbar(
             child: ReorderableListView(
               padding: EdgeInsets.symmetric(vertical: 8.0),
-              onReorder: (int oldIndex, int newIndex) {
+              onReorderItem: (int oldIndex, int newIndex) {
                 if (newIndex > oldIndex) newIndex -= 1;
                 final element = PathTileData.items.removeAt(oldIndex);
                 PathTileData.items.insert(newIndex, element);

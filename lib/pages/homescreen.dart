@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
           fontWeight: FontWeight.w700,
         ),
       ),
-      trailing: Icon(FontAwesomeIcons.circleRight),
+      trailing: FaIcon(FontAwesomeIcons.circleRight),
       subtitle: Text(
         item.gurmukhi,
         style: new TextStyle(
