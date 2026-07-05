@@ -117,3 +117,7 @@ google-services.json
 coverage/
 # Snyk Security Extension - AI Rules (auto-generated)
 .github/instructions/snyk_rules.instructions.md
+
+.kotlinc/
+**/.kotlin/
+local.properties
