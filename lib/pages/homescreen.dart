@@ -33,26 +33,38 @@ class HomeScreen extends StatelessWidget {
 
   ///Builds a nitnem paath line entry
   Widget buildNitnemTile(BuildContext context, PathTile item, _ViewModel vm) {
+    final theme = Theme.of(context);
     var listTile = ListTile(
       onTap: () => vm.onPathClickAction(context, item),
       dense: false,
-      leading: new Image.asset(
+      leading: Image.asset(
         'assets/images/book.png',
         fit: BoxFit.fill,
         width: 36,
       ),
       title: Text(
         item.title,
-        style: new TextStyle(
+        style: TextStyle(
           fontFamily: AppConstants.HOME_LISTITEM_FONT,
           fontSize: AppConstants.HOME_LISTITEM_FONT_SIZE,
           fontWeight: FontWeight.w700,
         ),
       ),
-      trailing: FaIcon(FontAwesomeIcons.circleRight),
+      trailing: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: theme.primaryColor.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.chevron_right,
+          color: theme.primaryColor,
+          size: 20,
+        ),
+      ),
       subtitle: Text(
         item.gurmukhi,
-        style: new TextStyle(
+        style: TextStyle(
           fontFamily: AppConstants.HOME_LISTSUBITEM_FONT,
           fontSize: AppConstants.HOME_LISTSUBITEM_FONT_SIZE,
           fontWeight: FontWeight.w700,

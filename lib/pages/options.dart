@@ -452,7 +452,9 @@ class OptionsPage extends StatelessWidget {
 
     printInfoMessage('[BUILD] Options Completed');
     return DefaultTextStyle(
-      style: theme.primaryTextTheme.bodySmall!,
+      style: theme.primaryTextTheme.bodySmall!.copyWith(
+        fontSize: AppConstants.OPTIONS_LABEL_FONT_SIZE,
+      ),
       child: ListView(
         padding: const EdgeInsets.only(bottom: 124.0),
         children:
