@@ -8,4 +8,6 @@ class SharedPrefKeys {
   static const String SAVE_SCROLL_POSITION = "saveScrollPosition";
   static const String SCROLL_OFFSET = "scrollOffset";
   static const String BAANI_ORDERED_IDS = "baaniOrderedIds";
+  static const String READING_SESSIONS = "readingSessions";
+  static const String DAILY_GOAL_MINUTES = "dailyGoalMinutes";
 }

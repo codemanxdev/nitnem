@@ -67,21 +67,15 @@ class BaaniOrderScreen extends StatelessWidget {
             backgroundColor: theme.primaryColor,
             centerTitle: true,
             title: Text("Change Baani Order"),
-            leading: IconButton(
-              onPressed: () {
-                AppNavigator.goBack(context);
-              },
-              icon: FaIcon(FontAwesomeIcons.leftLong),
-            ),
             actions: <Widget>[
               IconButton(
-                icon: FaIcon(FontAwesomeIcons.rotateLeft),
+                icon: const Icon(Icons.undo),
                 onPressed: () {
                   vm.onOrderResetAction(context);
                 },
               ),
               IconButton(
-                icon: FaIcon(FontAwesomeIcons.circleCheck),
+                icon: const Icon(Icons.check),
                 onPressed: () {
                   vm.onOrderSaveAction(context);
                 },

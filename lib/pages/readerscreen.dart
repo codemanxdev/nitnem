@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:nitnem/common/printmessage.dart';
 import 'package:nitnem/constants/appconstants.dart';
 import 'package:nitnem/models/language.dart';
+import 'package:nitnem/models/readingsession.dart';
 import 'package:nitnem/models/scrollinfo.dart';
 import 'package:nitnem/pages/options.dart';
 import 'package:nitnem/redux/actions/actions.dart';
@@ -39,10 +40,12 @@ class _MyReaderPageState extends State<ReaderScreen> {
   bool _topButtonVisible = false;
   Timer? _batteryTimer;
   Timer? _scrollPosTimer;
+  DateTime? _sessionStartTime;
 
   @override
   void initState() {
     super.initState();
+    _sessionStartTime = DateTime.now();
     _startBatteryUpdateTimer();
     _updateBatteryLevel();
     _updateCurrentTime();
@@ -128,7 +131,7 @@ class _MyReaderPageState extends State<ReaderScreen> {
     final double loadedScrollOffset =
         StoreProvider.of<AppState>(
           context,
-        ).state.options.scrollOffset[id.toString()]!.scrollOffset;
+        ).state.options.scrollOffset[id.toString()]?.scrollOffset ?? 0.0;
     final double offset = savePos ? loadedScrollOffset : 0.0;
     _controller.animateTo(
       offset,
@@ -153,6 +156,26 @@ class _MyReaderPageState extends State<ReaderScreen> {
     _updateScrollPositionInStatusBar();
   }
 
+  void _saveSession() {
+    if (_sessionStartTime == null) return;
+
+    final endTime = DateTime.now();
+    final duration = endTime.difference(_sessionStartTime!);
+
+    // Only save if session lasted more than 10 seconds to avoid noise
+    if (duration.inSeconds > 10) {
+      final state = StoreProvider.of<AppState>(context).state;
+      final session = ReadingSession(
+        pathId: state.pathId,
+        pathTitle: state.pathTitle,
+        startTime: _sessionStartTime!,
+        endTime: endTime,
+        durationSeconds: duration.inSeconds,
+      );
+      StoreProvider.of<AppState>(context).dispatch(SaveReadingSessionAction(session));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -170,6 +193,7 @@ class _MyReaderPageState extends State<ReaderScreen> {
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
         if (didPop) {
+          _saveSession();
           StoreProvider.of<AppState>(
             context,
           ).dispatch(ClearReaderOptionsToggleAction());

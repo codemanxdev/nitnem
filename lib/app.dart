@@ -7,6 +7,7 @@ import 'package:nitnem/pages/homescreen.dart';
 import 'package:nitnem/pages/options.dart';
 import 'package:nitnem/pages/readerscreen.dart';
 import 'package:nitnem/pages/splashscreen.dart';
+import 'package:nitnem/pages/statsscreen.dart';
 import 'package:nitnem/redux/actions/actions.dart';
 import 'package:nitnem/redux/selectors/selectors.dart';
 import 'package:nitnem/state/appstate.dart';
@@ -20,6 +21,7 @@ class NitnemApp extends StatelessWidget {
   final _homeScreenKey = GlobalKey();
   final _readerScreenKey = GlobalKey();
   final _orderScreenKey = GlobalKey();
+  final _statsScreenKey = GlobalKey();
 
   NitnemApp(this.store);
 
@@ -85,6 +87,10 @@ class NitnemApp extends StatelessWidget {
         routeName: '/order',
         buildRoute:
             (BuildContext context) => BaaniOrderScreen(key: _orderScreenKey),
+      ),
+      AppRoute(
+        routeName: '/stats',
+        buildRoute: (BuildContext context) => StatsScreen(key: _statsScreenKey),
       ),
     ];
     return routes;

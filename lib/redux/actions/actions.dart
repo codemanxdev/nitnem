@@ -1,4 +1,5 @@
 import 'package:nitnem/models/pathtile.dart';
+import 'package:nitnem/models/readingsession.dart';
 import 'package:nitnem/models/scrollinfo.dart';
 import 'package:nitnem/state/appoptions.dart';
 
@@ -94,4 +95,16 @@ class ToggleReadingPositionSaveAction {
   final bool savePos;
 
   ToggleReadingPositionSaveAction(this.savePos);
+}
+
+class ChangeDailyGoalAction {
+  final int minutes;
+
+  ChangeDailyGoalAction(this.minutes);
+}
+
+class SaveReadingSessionAction {
+  final ReadingSession session;
+
+  SaveReadingSessionAction(this.session);
 }

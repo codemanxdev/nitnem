@@ -15,7 +15,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'baaniorderreducer.dart';
 import 'boldreducer.dart';
+import 'dailygoalreducer.dart';
 import 'languagereducer.dart';
+import 'readingsessionreducer.dart';
 import 'statusreducer.dart';
 import 'textscalereducer.dart';
 import 'themereducer.dart';
@@ -39,7 +41,9 @@ AppState appReducer(AppState state, dynamic action) {
       action is ClearReaderOptionsToggleAction ||
       action is ToggleReadingPositionSaveAction ||
       action is BaaniOrderChangeAction ||
-      action is BaaniOrderResetAction) {
+      action is BaaniOrderResetAction ||
+      action is SaveReadingSessionAction ||
+      action is ChangeDailyGoalAction) {
     newState = AppState(
       options: AppOptions(
         themeName: themeReducer(state.options.themeName, action),
@@ -57,6 +61,8 @@ AppState appReducer(AppState state, dynamic action) {
           state.options.baaniOrderedIds,
           action,
         ),
+        readingSessions: readingSessionReducer(state.options.readingSessions, action),
+        dailyGoalMinutes: dailyGoalReducer(state.options.dailyGoalMinutes, action),
       ),
       showReaderOptions: readerOptionsReducer(state.showReaderOptions, action),
       pathData: pathDataReducer(state.pathData, action),

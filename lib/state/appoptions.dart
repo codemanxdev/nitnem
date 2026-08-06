@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:nitnem/constants/sharedprefkeys.dart';
 import 'package:nitnem/data/languagedata.dart';
 import 'package:nitnem/data/pathtiledata.dart';
+import 'package:nitnem/models/readingsession.dart';
 import 'package:nitnem/models/scrollinfo.dart';
 import 'package:nitnem/models/themes.dart';
 
@@ -23,6 +24,8 @@ class AppOptions {
     required this.saveScrollPosition,
     required this.scrollOffset,
     required this.baaniOrderedIds,
+    required this.readingSessions,
+    required this.dailyGoalMinutes,
   });
 
   final String themeName;
@@ -34,6 +37,8 @@ class AppOptions {
   final bool saveScrollPosition;
   final Map<String, ScrollInfo> scrollOffset;
   final List<dynamic> baaniOrderedIds;
+  final List<ReadingSession> readingSessions;
+  final int dailyGoalMinutes;
 
   factory AppOptions.initial() => AppOptions(
     themeName: ThemeName.Default.toString(),
@@ -49,6 +54,8 @@ class AppOptions {
       value: (v) => new ScrollInfo(v.id, 0.0, 0.0),
     ),
     baaniOrderedIds: PathTileData.items.map((item) => item.id).toList(),
+    readingSessions: [],
+    dailyGoalMinutes: 20,
   );
 
   AppOptions copyWith({
@@ -61,6 +68,8 @@ class AppOptions {
     bool? saveScrollPosition,
     Map<String, ScrollInfo>? scrollOffset,
     List<dynamic>? baaniOrderedIds,
+    List<ReadingSession>? readingSessions,
+    int? dailyGoalMinutes,
   }) {
     return AppOptions(
       themeName: themeName ?? this.themeName,
@@ -72,6 +81,8 @@ class AppOptions {
       saveScrollPosition: saveScrollPosition ?? this.saveScrollPosition,
       scrollOffset: scrollOffset ?? this.scrollOffset,
       baaniOrderedIds: baaniOrderedIds ?? this.baaniOrderedIds,
+      readingSessions: readingSessions ?? this.readingSessions,
+      dailyGoalMinutes: dailyGoalMinutes ?? this.dailyGoalMinutes,
     );
   }
 
@@ -87,7 +98,9 @@ class AppOptions {
         screenAwake == typedOther.screenAwake &&
         saveScrollPosition == typedOther.saveScrollPosition &&
         scrollOffset == typedOther.scrollOffset &&
-        baaniOrderedIds == typedOther.baaniOrderedIds;
+        baaniOrderedIds == typedOther.baaniOrderedIds &&
+        listEquals(readingSessions, typedOther.readingSessions) &&
+        dailyGoalMinutes == typedOther.dailyGoalMinutes;
   }
 
   @override
@@ -101,6 +114,8 @@ class AppOptions {
     saveScrollPosition,
     scrollOffset,
     baaniOrderedIds,
+    readingSessions,
+    dailyGoalMinutes,
   ]);
 
   Map<String, dynamic> toJson() {
@@ -114,6 +129,9 @@ class AppOptions {
     map[SharedPrefKeys.SAVE_SCROLL_POSITION] = this.saveScrollPosition;
     map[SharedPrefKeys.SCROLL_OFFSET] = json.encode(this.scrollOffset);
     map[SharedPrefKeys.BAANI_ORDERED_IDS] = this.baaniOrderedIds;
+    map[SharedPrefKeys.READING_SESSIONS] =
+        this.readingSessions.map((s) => s.toJson()).toList();
+    map[SharedPrefKeys.DAILY_GOAL_MINUTES] = this.dailyGoalMinutes;
     return map;
   }
 

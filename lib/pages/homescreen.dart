@@ -80,9 +80,12 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: isDark ? kFlutterBlue : theme.primaryColor,
           appBar: BackdropAppBar(
             backgroundColor: theme.primaryColor,
+            centerTitle: true,
             title: Padding(
               padding: const EdgeInsets.only(top: 15.0),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   new Image.asset(
                     'assets/images/floral-left.png',
@@ -104,10 +107,13 @@ class HomeScreen extends StatelessWidget {
                     width: AppConstants.HOME_FLORAL_WIDTH,
                   ),
                 ],
-                mainAxisAlignment: MainAxisAlignment.center,
               ),
             ),
             actions: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.bar_chart),
+                onPressed: () => AppNavigator.goToStats(context),
+              ),
               BackdropToggleButton(icon: AnimatedIcons.list_view),
             ],
           ),

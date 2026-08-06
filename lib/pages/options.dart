@@ -317,6 +317,41 @@ class _TextScaleFactorItem extends StatelessWidget {
   }
 }
 
+class _DailyGoalItem extends StatelessWidget {
+  const _DailyGoalItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return _OptionsItem(
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text('Daily Goal (Minutes)'),
+                Text(
+                  '${StoreProvider.of<AppState>(context).state.options.dailyGoalMinutes}m',
+                  style: Theme.of(context).primaryTextTheme.bodyMedium,
+                ),
+                Slider(
+                  min: 5,
+                  max: 120,
+                  divisions: 23,
+                  value: StoreProvider.of<AppState>(context).state.options.dailyGoalMinutes.toDouble(),
+                  onChanged: (double value) {
+                    StoreProvider.of<AppState>(context).dispatch(ChangeDailyGoalAction(value.toInt()));
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _LanguageItem extends StatelessWidget {
   final bool readerMode;
 
@@ -393,6 +428,7 @@ class OptionsPage extends StatelessWidget {
       _BoldItem(),
       _ShowStatusItem(),
       _TextScaleFactorItem(),
+      _DailyGoalItem(),
       (defaultTargetPlatform == TargetPlatform.android)
           ? _KeepScreenAwakeItem()
           : Container(),

@@ -6,6 +6,7 @@ import '../common/printmessage.dart';
 import '../constants/appconstants.dart';
 import '../constants/sharedprefkeys.dart';
 import '../data/pathtiledata.dart';
+import '../models/readingsession.dart';
 import '../models/scrollinfo.dart';
 import '../state/appoptions.dart';
 
@@ -31,6 +32,10 @@ Future<AppOptions> loadOptionsFromPrefs() async {
           prefs[SharedPrefKeys.SCROLL_OFFSET],
         ),
         baaniOrderedIds: prefs[SharedPrefKeys.BAANI_ORDERED_IDS],
+        readingSessions: (prefs[SharedPrefKeys.READING_SESSIONS] as List?)
+            ?.map((s) => ReadingSession.fromJson(s))
+            .toList() ?? [],
+        dailyGoalMinutes: prefs[SharedPrefKeys.DAILY_GOAL_MINUTES] ?? 20,
       );
     } on Exception catch (ex) {
       printErrorMessage(ex.toString());

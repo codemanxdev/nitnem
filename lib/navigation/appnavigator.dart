@@ -17,6 +17,10 @@ class AppNavigator {
     Navigator.pushNamed(context, '/order');
   }
 
+  static void goToStats(BuildContext context) {
+    Navigator.pushNamed(context, '/stats');
+  }
+
   static void goBack(BuildContext context) {
     Navigator.pop(context);
   }
