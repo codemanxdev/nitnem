@@ -26,6 +26,7 @@ class AppConstants {
   static const String HOME_LISTSUBITEM_FONT = 'Gurakhar';
   static const double HOME_LISTSUBITEM_FONT_SIZE = 20.0;
   static const double HOME_FLORAL_WIDTH = 56;
+  static const double HOME_BOOK_ICON_SIZE = 48.0;
 
   //Reader Screen
   static const double READER_PADDING = 15.0;

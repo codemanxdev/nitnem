@@ -37,10 +37,9 @@ class HomeScreen extends StatelessWidget {
     var listTile = ListTile(
       onTap: () => vm.onPathClickAction(context, item),
       dense: false,
-      leading: Image.asset(
-        'assets/images/book.png',
-        fit: BoxFit.fill,
-        width: 36,
+      leading: const Text(
+        '📖',
+        style: TextStyle(fontSize: AppConstants.HOME_BOOK_ICON_SIZE),
       ),
       title: Text(
         item.title,

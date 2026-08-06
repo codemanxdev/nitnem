@@ -22,10 +22,9 @@ class BaaniOrderScreen extends StatelessWidget {
       key: UniqueKey(),
       onTap: () => (),
       dense: false,
-      leading: new Image.asset(
-        'assets/images/book.png',
-        fit: BoxFit.fill,
-        width: 36,
+      leading: const Text(
+        '📖',
+        style: TextStyle(fontSize: AppConstants.HOME_BOOK_ICON_SIZE),
       ),
       title: Text(
         item.title,

@@ -52,7 +52,6 @@ flutter:
     - assets/images/khanda.png
     - assets/images/floral-left.png
     - assets/images/floral-right.png
-    - assets/images/book.png
     - assets/themes/ThemeName.Forest.jpg
     - assets/themes/ThemeName.Stars.jpg
     - assets/themes/ThemeName.Default.jpg
