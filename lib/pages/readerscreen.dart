@@ -276,6 +276,7 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
                             (vm.showReaderOptions)
                                 ? AppConstants.EMPTY_STRING
                                 : vm.nitnemPathTitle,
+                            style: theme.appBarTheme.titleTextStyle,
                           ),
                           background:
                               vm.showReaderOptions

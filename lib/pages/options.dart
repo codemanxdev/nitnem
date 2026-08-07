@@ -456,7 +456,10 @@ class OptionsPage extends StatelessWidget {
         fontSize: AppConstants.OPTIONS_LABEL_FONT_SIZE,
       ),
       child: ListView(
-        padding: const EdgeInsets.only(bottom: 124.0),
+        padding: EdgeInsets.only(
+          top: this.readerMode ? kToolbarHeight + 10.0 : 0.0,
+          bottom: 124.0,
+        ),
         children:
             this.readerMode
                 ? blankWidgets + optWidgets
