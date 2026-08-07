@@ -90,6 +90,7 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: isDark ? kFlutterBlue : theme.primaryColor,
           appBar: BackdropAppBar(
             backgroundColor: theme.primaryColor,
+            iconTheme: theme.primaryIconTheme,
             centerTitle: true,
             title: Padding(
               padding: const EdgeInsets.only(top: 15.0),
@@ -108,11 +109,13 @@ class HomeScreen extends StatelessWidget {
                       child: Text(
                         AppConstants.HOME_TITLE_TEXT,
                         textAlign: TextAlign.center,
-                        style: new TextStyle(
-                          fontFamily: AppConstants.HOME_TITLE_FONT,
-                          fontSize: getTitleFontSize(context),
-                          fontWeight: FontWeight.bold,
-                        ),
+                          style: new TextStyle(
+                            fontFamily: AppConstants.HOME_TITLE_FONT,
+                            fontSize: getTitleFontSize(context),
+                            fontWeight: FontWeight.bold,
+                            color: theme.primaryTextTheme.titleMedium?.color ??
+                                Colors.white,
+                          ),
                       ),
                     ),
                   ),
@@ -126,10 +129,16 @@ class HomeScreen extends StatelessWidget {
             ),
             actions: <Widget>[
               IconButton(
-                icon: const Icon(Icons.bar_chart),
+                icon: Icon(
+                  Icons.bar_chart,
+                  color: theme.primaryIconTheme.color ?? Colors.white,
+                ),
                 onPressed: () => AppNavigator.goToStats(context),
               ),
-              BackdropToggleButton(icon: AnimatedIcons.list_view),
+              BackdropToggleButton(
+                icon: AnimatedIcons.list_view,
+                color: theme.primaryIconTheme.color ?? Colors.white,
+              ),
             ],
           ),
           backLayer: optionsPage,

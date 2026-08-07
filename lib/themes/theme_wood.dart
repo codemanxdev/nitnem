@@ -22,6 +22,18 @@ ThemeData buildWoodTheme() {
     canvasColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,
     highlightColor: Colors.blueGrey,
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryColor,
+      iconTheme: const IconThemeData(color: Colors.white),
+      actionsIconTheme: const IconThemeData(color: Colors.white),
+      centerTitle: true,
+      titleTextStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    primaryIconTheme: const IconThemeData(color: Colors.white),
     buttonTheme: ButtonThemeData(
       colorScheme: colorScheme,
       textTheme: ButtonTextTheme.primary,
@@ -56,7 +68,7 @@ ThemeData buildWoodTheme() {
     textTheme: buildTextTheme(base.textTheme),
     primaryTextTheme: buildPrimaryTextTheme(
       base.primaryTextTheme,
-      Color(0xff2d1f1b),
+      Colors.white,
     ),
   );
 }

@@ -27,8 +27,10 @@ class _StatsScreenState extends State<StatsScreen> {
         return Scaffold(
           appBar: AppBar(
             backgroundColor: theme.primaryColor,
+            iconTheme: theme.primaryIconTheme,
             title: const Text('Activity'),
             centerTitle: true,
+            titleTextStyle: theme.appBarTheme.titleTextStyle,
           ),
           body: SingleChildScrollView(
             child: Padding(

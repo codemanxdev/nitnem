@@ -29,6 +29,18 @@ ThemeData buildForestTheme() {
     canvasColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,
     highlightColor: Color(0xff094D11),
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryColor,
+      iconTheme: IconThemeData(color: colorScheme.onPrimary),
+      actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        color: colorScheme.onPrimary,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    primaryIconTheme: IconThemeData(color: colorScheme.onPrimary),
     buttonTheme: ButtonThemeData(
       colorScheme: colorScheme,
       textTheme: ButtonTextTheme.primary,
@@ -63,7 +75,7 @@ ThemeData buildForestTheme() {
     textTheme: buildTextTheme(base.textTheme),
     primaryTextTheme: buildPrimaryTextTheme(
       base.primaryTextTheme,
-      Color(0xff124714),
+      colorScheme.onPrimary,
     ),
   );
 }

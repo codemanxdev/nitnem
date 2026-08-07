@@ -254,10 +254,13 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
                       SliverAppBar(
                         backgroundColor:
                             isDark ? kFlutterBlue : theme.primaryColor,
+                        iconTheme: theme.primaryIconTheme,
                         actions: <Widget>[
                           IconButton(
-                            icon: FaIcon(FontAwesomeIcons.sliders),
-
+                            icon: FaIcon(
+                              FontAwesomeIcons.sliders,
+                              color: theme.primaryIconTheme.color ?? Colors.white,
+                            ),
                             onPressed: vm.onToggleReaderOptions,
                           ),
                         ],

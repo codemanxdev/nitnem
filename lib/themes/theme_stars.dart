@@ -23,6 +23,18 @@ ThemeData buildDarkTheme() {
     canvasColor: const Color(0xFF202124),
     scaffoldBackgroundColor: const Color(0xFF202124),
     highlightColor: Colors.white,
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryColor,
+      iconTheme: const IconThemeData(color: Colors.white),
+      actionsIconTheme: const IconThemeData(color: Colors.white),
+      centerTitle: true,
+      titleTextStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    primaryIconTheme: const IconThemeData(color: Colors.white),
     buttonTheme: ButtonThemeData(
       colorScheme: colorScheme,
       textTheme: ButtonTextTheme.primary,

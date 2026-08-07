@@ -12,7 +12,7 @@ ThemeData buildEthnicTheme() {
     tertiary: tertiaryColor,
     surface: Color(0xffd67600),
     error: Color(0xffd32f2f),
-    onPrimary: Color(0xffffc779),
+    onPrimary: Colors.white,
     onSecondary: Color(0xff000000),
     onSurface: Color(0xff000000),
     onError: Color(0xffffffff),
@@ -29,6 +29,18 @@ ThemeData buildEthnicTheme() {
     canvasColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,
     highlightColor: Colors.blueGrey,
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryColor,
+      iconTheme: const IconThemeData(color: Colors.white),
+      actionsIconTheme: const IconThemeData(color: Colors.white),
+      centerTitle: true,
+      titleTextStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    primaryIconTheme: const IconThemeData(color: Colors.white),
     buttonTheme: ButtonThemeData(
       colorScheme: colorScheme,
       textTheme: ButtonTextTheme.primary,
@@ -63,7 +75,7 @@ ThemeData buildEthnicTheme() {
     textTheme: buildTextTheme(base.textTheme),
     primaryTextTheme: buildPrimaryTextTheme(
       base.primaryTextTheme,
-      Color(0xff854900),
+      Colors.white,
     ),
   );
 }
