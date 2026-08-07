@@ -359,46 +359,42 @@ class _LanguageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String currentLanguage =
+        StoreProvider.of<AppState>(context).state.options.languageName;
+
     return _OptionsItem(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Text('Language'),
-                Text(
-                  '${StoreProvider.of<AppState>(context).state.options.languageName}',
-                  style: Theme.of(context).primaryTextTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-          PopupMenuButton<LanguageMenuItem>(
-            padding: const EdgeInsetsDirectional.only(end: 16.0),
-            icon: const Icon(Icons.arrow_drop_down),
-            itemBuilder: (BuildContext context) {
-              return languages.map((LanguageMenuItem choice) {
-                return PopupMenuItem<LanguageMenuItem>(
-                  value: choice,
-                  child: Text(choice.title),
-                );
-              }).toList();
-            },
-            onSelected: (LanguageMenuItem selectedValue) {
-              if (readerMode) {
-                StoreProvider.of<AppState>(context).dispatch(
-                  ChangeLanguageAndFetchNitnemPathAction(
-                    selectedValue.title,
-                    StoreProvider.of<AppState>(context).state.pathFilePrefix,
-                  ),
-                );
-              } else {
-                StoreProvider.of<AppState>(
-                  context,
-                ).dispatch(ChangeLanguageAction(selectedValue.title));
-              }
-            },
+          const Text('Language'),
+          Wrap(
+            spacing: 8.0,
+            children:
+                languages.map((LanguageMenuItem choice) {
+                  return ChoiceChip(
+                    label: Text(choice.title),
+                    selected: currentLanguage == choice.title,
+                    onSelected: (bool selected) {
+                      if (selected) {
+                        if (readerMode) {
+                          StoreProvider.of<AppState>(context).dispatch(
+                            ChangeLanguageAndFetchNitnemPathAction(
+                              choice.title,
+                              StoreProvider.of<AppState>(
+                                context,
+                              ).state.pathFilePrefix,
+                            ),
+                          );
+                        } else {
+                          StoreProvider.of<AppState>(
+                            context,
+                          ).dispatch(ChangeLanguageAction(choice.title));
+                        }
+                      }
+                    },
+                    selectedColor: Theme.of(context).colorScheme.surface,
+                  );
+                }).toList(),
           ),
         ],
       ),
