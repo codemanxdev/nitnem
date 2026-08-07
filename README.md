@@ -60,11 +60,11 @@ This app provides the daily Baanis (verses) that are recited by Sikhs every morn
 
 | Home Screen | Options | Gurmukhi |
 | :---: | :---: | :---: |
-| ![](listing/android-phone/mainscreen.png) | ![](listing/android-phone/options.png) | ![](listing/android-phone/path-gurmukhi.png) |
+| <img src="listing/android-phone/mainscreen.png" height="400"> | <img src="listing/android-phone/options.png" height="400"> | <img src="listing/android-phone/path-gurmukhi.png" height="400"> |
 
 | English Translation | Hindi Translation |
 | :---: | :---: |
-| ![](listing/android-phone/path-english.png) | ![](listing/android-phone/path-hindi.png) |
+| <img src="listing/android-phone/path-english.png" height="400"> | <img src="listing/android-phone/path-hindi.png" height="400"> |
 
 ## 🙏 Respectful Usage
 
