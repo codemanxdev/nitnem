@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _splashTimer = Timer(
-      Duration(seconds: AppConstants.SPLASH_WAIT),
+      Duration(milliseconds: (AppConstants.SPLASH_WAIT_SECONDS * 1000).toInt()),
       () => AppNavigator.goToHome(context),
     );
     _initGetPackageInfo();
@@ -84,14 +84,33 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  AppConstants.SPLASH_TITLE_TEXT,
-                  style: TextStyle(
-                    color: onPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Kingthings',
-                    fontSize: AppConstants.SPLASH_TITLE_TEXT_SIZE,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      AppConstants.SPLASH_TITLE_TEXT,
+                      style: TextStyle(
+                        color: onPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: AppConstants.SPLASH_TITLE_FONT,
+                        fontSize: AppConstants.SPLASH_TITLE_TEXT_SIZE,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Text(
+                        AppConstants.SPLASH_SUBTITLE_TEXT,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: onPrimary.withValues(alpha: 0.9),
+                          fontSize: AppConstants.SPLASH_SUBTITLE_TEXT_SIZE,
+                          fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Expanded(
@@ -108,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
-                          fontFamily: 'Sansation',
+                          fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
                           color: onPrimary,
                         ),
                       ),
@@ -133,6 +152,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.w300,
                           fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
+                          fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
                           color: onPrimary,
                         ),
                       ),

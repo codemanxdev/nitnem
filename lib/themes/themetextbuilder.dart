@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nitnem/constants/appconstants.dart';
 
 TextTheme buildTextTheme(TextTheme base) {
   return base.copyWith(
-    headlineMedium: base.headlineMedium!.copyWith(fontFamily: 'GoogleSans'),
+    headlineMedium: base.headlineMedium!.copyWith(
+      fontFamily: AppConstants.ROBOTO_SLAB_FONT,
+    ),
   );
 }
 

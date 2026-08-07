@@ -142,7 +142,7 @@ class _Heading extends StatelessWidget {
     return _OptionsItem(
       child: DefaultTextStyle(
         style: theme.textTheme.bodyMedium!.copyWith(
-          fontFamily: 'GoogleSans',
+          fontFamily: AppConstants.ROBOTO_SLAB_FONT,
           color: theme.colorScheme.secondary,
         ),
         child: Semantics(child: Text(text), header: true),
