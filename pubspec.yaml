@@ -18,12 +18,14 @@ dependencies:
   flutter_redux: ^0.10.0
   battery_plus: ^7.1.0
   provider: ^6.1.2
-  wakelock_plus: ^1.6.1
+  wakelock_plus: ^1.7.0
   fl_chart: ^0.70.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 flutter_launcher_icons:

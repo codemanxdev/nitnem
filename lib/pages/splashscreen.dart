@@ -65,25 +65,28 @@ class _SplashScreenState extends State<SplashScreen> {
             children: <Widget>[
               Expanded(
                 flex: 3,
-                child: Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(top: 10.0),
-                        padding: EdgeInsets.all(5.0),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20.0),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: getRadius() * 2,
+                        maxWidth: getRadius() * 2,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.contain,
                         child: CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: getRadius(),
-                          child: new SplashIcon(),
+                          child: const SplashIcon(),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -169,6 +172,8 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class SplashIcon extends StatelessWidget {
+  const SplashIcon({super.key});
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
