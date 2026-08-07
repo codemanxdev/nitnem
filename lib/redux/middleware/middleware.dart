@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:nitnem/data/pathtiledata.dart';
 import 'package:nitnem/models/language.dart';
+import 'package:nitnem/models/readingsession.dart';
 import 'package:nitnem/models/scrollinfo.dart';
 import 'package:nitnem/redux/actions/actions.dart';
 import 'package:nitnem/state/appstate.dart';
@@ -108,6 +109,58 @@ void storeOptionsMiddleware(
   if (action is ChangeThemeAction) {
     state = state.copyWith(
       options: state.options.copyWith(themeName: action.themeName),
+    );
+    saveOptionsToPrefs(state.options);
+  }
+
+  if (action is SaveReadingSessionAction) {
+    // We need to calculate what the next state's options will look like
+    // to save it immediately. Reducer will handle the actual state update.
+    final List<ReadingSession> newSessions =
+        List<ReadingSession>.from(state.options.readingSessions)
+          ..add(action.session);
+    if (newSessions.length > 1000) newSessions.removeAt(0);
+
+    // Calculate streak using the action's timestamp for purity
+    final today = DateTime(
+      action.timestamp.year,
+      action.timestamp.month,
+      action.timestamp.day,
+    );
+    final lastRead = state.options.lastReadDate != null
+        ? DateTime(
+          state.options.lastReadDate!.year,
+          state.options.lastReadDate!.month,
+          state.options.lastReadDate!.day,
+        )
+        : null;
+
+    int newStreak = state.options.currentStreak;
+    if (lastRead == null) {
+      newStreak = 1;
+    } else {
+      final difference = today.difference(lastRead).inDays;
+      if (difference == 1) {
+        newStreak += 1;
+      } else if (difference > 1) {
+        newStreak = 1;
+      }
+    }
+
+    final newOptions = state.options.copyWith(
+      readingSessions: newSessions,
+      totalReadingDuration:
+          state.options.totalReadingDuration + action.session.durationSeconds,
+      totalSessionsCount: state.options.totalSessionsCount + 1,
+      currentStreak: newStreak,
+      lastReadDate: action.timestamp,
+    );
+    saveOptionsToPrefs(newOptions);
+  }
+
+  if (action is ChangeDailyGoalAction) {
+    state = state.copyWith(
+      options: state.options.copyWith(dailyGoalMinutes: action.minutes),
     );
     saveOptionsToPrefs(state.options);
   }

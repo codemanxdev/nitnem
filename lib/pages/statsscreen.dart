@@ -98,9 +98,9 @@ class _StatsScreenState extends State<StatsScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.primaryColor.withOpacity(0.05),
+        color: theme.primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.primaryColor.withOpacity(0.1)),
+        border: Border.all(color: theme.primaryColor.withValues(alpha: 0.1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -117,7 +117,7 @@ class _StatsScreenState extends State<StatsScreen> {
                     CircularProgressIndicator(
                       value: progress,
                       strokeWidth: 8,
-                      backgroundColor: theme.primaryColor.withOpacity(0.1),
+                      backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
                       valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
                     ),
                     Center(
@@ -174,7 +174,7 @@ class _StatsScreenState extends State<StatsScreen> {
         Expanded(
           child: _StatCard(
             title: 'Sessions',
-            value: '${vm.sessions.length}',
+            value: '${vm.totalSessionsCount}',
             icon: Icons.history,
             color: theme.colorScheme.secondary,
           ),
@@ -265,7 +265,7 @@ class _StatsScreenState extends State<StatsScreen> {
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(
                 show: true,
-                color: theme.primaryColor.withOpacity(0.2),
+                color: theme.primaryColor.withValues(alpha: 0.2),
               ),
             ),
           ],
@@ -322,9 +322,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,7 +334,7 @@ class _StatCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               fontSize: 14,
             ),
           ),
@@ -352,6 +352,7 @@ class _StatCard extends StatelessWidget {
 class _ViewModel {
   final List<ReadingSession> sessions;
   final int totalDurationSeconds;
+  final int totalSessionsCount;
   final int todayDurationSeconds;
   final int currentStreak;
   final int dailyGoalMinutes;
@@ -359,6 +360,7 @@ class _ViewModel {
   _ViewModel({
     required this.sessions,
     required this.totalDurationSeconds,
+    required this.totalSessionsCount,
     required this.todayDurationSeconds,
     required this.currentStreak,
     required this.dailyGoalMinutes,
@@ -366,7 +368,8 @@ class _ViewModel {
 
   static _ViewModel fromStore(Store<AppState> store) {
     final sessions = store.state.options.readingSessions;
-    final totalDuration = sessions.fold(0, (sum, s) => sum + s.durationSeconds);
+    final totalDuration = store.state.options.totalReadingDuration;
+    final totalCount = store.state.options.totalSessionsCount;
     
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -381,41 +384,12 @@ class _ViewModel {
     return _ViewModel(
       sessions: sessions,
       totalDurationSeconds: totalDuration,
+      totalSessionsCount: totalCount,
       todayDurationSeconds: todayDuration,
-      currentStreak: _calculateStreak(sessions),
+      currentStreak: store.state.options.currentStreak,
       dailyGoalMinutes: store.state.options.dailyGoalMinutes,
     );
   }
 
-  static int _calculateStreak(List<ReadingSession> sessions) {
-    if (sessions.isEmpty) return 0;
-
-    final readDates = sessions
-        .map((s) => DateTime(s.startTime.year, s.startTime.month, s.startTime.day))
-        .toSet()
-        .toList()
-      ..sort((a, b) => b.compareTo(a));
-
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    if (readDates.isEmpty || (!readDates.first.isAtSameMomentAs(today) && !readDates.first.isAtSameMomentAs(yesterday))) {
-      return 0;
-    }
-
-    int streak = 0;
-    DateTime checkDate = readDates.first;
-
-    for (final date in readDates) {
-      if (date.isAtSameMomentAs(checkDate)) {
-        streak++;
-        checkDate = checkDate.subtract(const Duration(days: 1));
-      } else {
-        break;
-      }
-    }
-
-    return streak;
-  }
+  // Removed old _calculateStreak helper as it's now in Redux state
 }

@@ -17,8 +17,10 @@ import 'baaniorderreducer.dart';
 import 'boldreducer.dart';
 import 'dailygoalreducer.dart';
 import 'languagereducer.dart';
+import 'lifetime_stats_reducer.dart';
 import 'readingsessionreducer.dart';
 import 'statusreducer.dart';
+import 'streak_reducer.dart';
 import 'textscalereducer.dart';
 import 'themereducer.dart';
 
@@ -63,6 +65,10 @@ AppState appReducer(AppState state, dynamic action) {
         ),
         readingSessions: readingSessionReducer(state.options.readingSessions, action),
         dailyGoalMinutes: dailyGoalReducer(state.options.dailyGoalMinutes, action),
+        totalReadingDuration: totalDurationReducer(state.options.totalReadingDuration, action),
+        totalSessionsCount: totalSessionsCountReducer(state.options.totalSessionsCount, action),
+        currentStreak: currentStreakReducer(state.options, action),
+        lastReadDate: lastReadDateReducer(state.options.lastReadDate, action),
       ),
       showReaderOptions: readerOptionsReducer(state.showReaderOptions, action),
       pathData: pathDataReducer(state.pathData, action),

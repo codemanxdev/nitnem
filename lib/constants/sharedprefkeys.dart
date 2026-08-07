@@ -10,4 +10,8 @@ class SharedPrefKeys {
   static const String BAANI_ORDERED_IDS = "baaniOrderedIds";
   static const String READING_SESSIONS = "readingSessions";
   static const String DAILY_GOAL_MINUTES = "dailyGoalMinutes";
+  static const String TOTAL_READING_DURATION = "totalReadingDuration";
+  static const String TOTAL_SESSIONS_COUNT = "totalSessionsCount";
+  static const String CURRENT_STREAK = "currentStreak";
+  static const String LAST_READ_DATE = "lastReadDate";
 }

@@ -1,7 +1,6 @@
 import 'package:backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitnem/common/printmessage.dart';
 import 'package:nitnem/constants/appconstants.dart';
 import 'package:nitnem/data/pathtiledata.dart';
@@ -52,7 +51,7 @@ class HomeScreen extends StatelessWidget {
       trailing: Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: theme.primaryColor.withOpacity(0.1),
+          color: theme.primaryColor.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(

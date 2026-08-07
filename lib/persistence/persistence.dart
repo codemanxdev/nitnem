@@ -36,6 +36,12 @@ Future<AppOptions> loadOptionsFromPrefs() async {
             ?.map((s) => ReadingSession.fromJson(s))
             .toList() ?? [],
         dailyGoalMinutes: prefs[SharedPrefKeys.DAILY_GOAL_MINUTES] ?? 20,
+        totalReadingDuration: prefs[SharedPrefKeys.TOTAL_READING_DURATION] ?? 0,
+        totalSessionsCount: prefs[SharedPrefKeys.TOTAL_SESSIONS_COUNT] ?? 0,
+        currentStreak: prefs[SharedPrefKeys.CURRENT_STREAK] ?? 0,
+        lastReadDate: prefs[SharedPrefKeys.LAST_READ_DATE] != null
+            ? DateTime.parse(prefs[SharedPrefKeys.LAST_READ_DATE])
+            : null,
       );
     } on Exception catch (ex) {
       printErrorMessage(ex.toString());

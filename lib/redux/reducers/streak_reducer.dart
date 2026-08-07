@@ -1,17 +1,42 @@
 import 'package:nitnem/redux/actions/actions.dart';
-import 'package:redux/redux.dart';
+import 'package:nitnem/state/appoptions.dart';
 
-final currentStreakReducer = combineReducers<int>([
-  TypedReducer<int, SaveReadingSessionAction>(_updateStreak),
-]);
+int currentStreakReducer(AppOptions options, dynamic action) {
+  if (action is! SaveReadingSessionAction) return options.currentStreak;
 
-int _updateStreak(int state, SaveReadingSessionAction action) {
-  // We'll calculate the value in middleware and just pass it if we want,
-  // but here we can also do it. However, we need the lastReadDate.
-  // For simplicity in this Redux setup, let's calculate in middleware and update state.
-  return state; // Placeholder, see middleware
+  final today = DateTime(
+    action.timestamp.year,
+    action.timestamp.month,
+    action.timestamp.day,
+  );
+
+  final lastRead = options.lastReadDate != null
+      ? DateTime(
+        options.lastReadDate!.year,
+        options.lastReadDate!.month,
+        options.lastReadDate!.day,
+      )
+      : null;
+
+  if (lastRead == null) {
+    return 1;
+  }
+
+  final difference = today.difference(lastRead).inDays;
+
+  if (difference == 1) {
+    return options.currentStreak + 1;
+  } else if (difference > 1) {
+    return 1;
+  } else {
+    // difference == 0 (already read today), keep streak
+    return options.currentStreak;
+  }
 }
 
-final lastReadDateReducer = combineReducers<DateTime?>([
-  TypedReducer<DateTime?, SaveReadingSessionAction>((state, action) => DateTime.now()),
-]);
+DateTime? lastReadDateReducer(DateTime? state, dynamic action) {
+  if (action is SaveReadingSessionAction) {
+    return action.timestamp;
+  }
+  return state;
+}

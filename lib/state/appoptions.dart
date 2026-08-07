@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:meta/meta.dart';
 import 'package:nitnem/constants/sharedprefkeys.dart';
 import 'package:nitnem/data/languagedata.dart';
 import 'package:nitnem/data/pathtiledata.dart';
@@ -26,6 +24,10 @@ class AppOptions {
     required this.baaniOrderedIds,
     required this.readingSessions,
     required this.dailyGoalMinutes,
+    required this.totalReadingDuration,
+    required this.totalSessionsCount,
+    required this.currentStreak,
+    this.lastReadDate,
   });
 
   final String themeName;
@@ -39,6 +41,10 @@ class AppOptions {
   final List<dynamic> baaniOrderedIds;
   final List<ReadingSession> readingSessions;
   final int dailyGoalMinutes;
+  final int totalReadingDuration;
+  final int totalSessionsCount;
+  final int currentStreak;
+  final DateTime? lastReadDate;
 
   factory AppOptions.initial() => AppOptions(
     themeName: ThemeName.Default.toString(),
@@ -56,6 +62,10 @@ class AppOptions {
     baaniOrderedIds: PathTileData.items.map((item) => item.id).toList(),
     readingSessions: [],
     dailyGoalMinutes: 20,
+    totalReadingDuration: 0,
+    totalSessionsCount: 0,
+    currentStreak: 0,
+    lastReadDate: null,
   );
 
   AppOptions copyWith({
@@ -70,6 +80,10 @@ class AppOptions {
     List<dynamic>? baaniOrderedIds,
     List<ReadingSession>? readingSessions,
     int? dailyGoalMinutes,
+    int? totalReadingDuration,
+    int? totalSessionsCount,
+    int? currentStreak,
+    DateTime? lastReadDate,
   }) {
     return AppOptions(
       themeName: themeName ?? this.themeName,
@@ -83,6 +97,10 @@ class AppOptions {
       baaniOrderedIds: baaniOrderedIds ?? this.baaniOrderedIds,
       readingSessions: readingSessions ?? this.readingSessions,
       dailyGoalMinutes: dailyGoalMinutes ?? this.dailyGoalMinutes,
+      totalReadingDuration: totalReadingDuration ?? this.totalReadingDuration,
+      totalSessionsCount: totalSessionsCount ?? this.totalSessionsCount,
+      currentStreak: currentStreak ?? this.currentStreak,
+      lastReadDate: lastReadDate ?? this.lastReadDate,
     );
   }
 
@@ -100,7 +118,11 @@ class AppOptions {
         scrollOffset == typedOther.scrollOffset &&
         baaniOrderedIds == typedOther.baaniOrderedIds &&
         listEquals(readingSessions, typedOther.readingSessions) &&
-        dailyGoalMinutes == typedOther.dailyGoalMinutes;
+        dailyGoalMinutes == typedOther.dailyGoalMinutes &&
+        totalReadingDuration == typedOther.totalReadingDuration &&
+        totalSessionsCount == typedOther.totalSessionsCount &&
+        currentStreak == typedOther.currentStreak &&
+        lastReadDate == typedOther.lastReadDate;
   }
 
   @override
@@ -116,6 +138,10 @@ class AppOptions {
     baaniOrderedIds,
     readingSessions,
     dailyGoalMinutes,
+    totalReadingDuration,
+    totalSessionsCount,
+    currentStreak,
+    lastReadDate,
   ]);
 
   Map<String, dynamic> toJson() {
@@ -132,6 +158,10 @@ class AppOptions {
     map[SharedPrefKeys.READING_SESSIONS] =
         this.readingSessions.map((s) => s.toJson()).toList();
     map[SharedPrefKeys.DAILY_GOAL_MINUTES] = this.dailyGoalMinutes;
+    map[SharedPrefKeys.TOTAL_READING_DURATION] = this.totalReadingDuration;
+    map[SharedPrefKeys.TOTAL_SESSIONS_COUNT] = this.totalSessionsCount;
+    map[SharedPrefKeys.CURRENT_STREAK] = this.currentStreak;
+    map[SharedPrefKeys.LAST_READ_DATE] = this.lastReadDate?.toIso8601String();
     return map;
   }
 

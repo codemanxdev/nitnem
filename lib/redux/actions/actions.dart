@@ -105,6 +105,7 @@ class ChangeDailyGoalAction {
 
 class SaveReadingSessionAction {
   final ReadingSession session;
+  final DateTime timestamp;
 
-  SaveReadingSessionAction(this.session);
+  SaveReadingSessionAction(this.session, this.timestamp);
 }

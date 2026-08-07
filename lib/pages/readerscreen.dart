@@ -26,7 +26,7 @@ class ReaderScreen extends StatefulWidget {
   _MyReaderPageState createState() => _MyReaderPageState();
 }
 
-class _MyReaderPageState extends State<ReaderScreen> {
+class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver {
   final Battery _battery = Battery();
   ScrollController _controller = ScrollController(initialScrollOffset: 0.0);
   static final GlobalKey _optionsKey = GlobalKey();
@@ -40,15 +40,35 @@ class _MyReaderPageState extends State<ReaderScreen> {
   bool _topButtonVisible = false;
   Timer? _batteryTimer;
   Timer? _scrollPosTimer;
-  DateTime? _sessionStartTime;
+
+  // Session Tracking
+  int _activeSeconds = 0;
+  DateTime? _lastResumeTime;
 
   @override
   void initState() {
     super.initState();
-    _sessionStartTime = DateTime.now();
+    WidgetsBinding.instance.addObserver(this);
+    _lastResumeTime = DateTime.now();
     _startBatteryUpdateTimer();
     _updateBatteryLevel();
     _updateCurrentTime();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      _saveSession(); // Save current segment before app goes away
+    } else if (state == AppLifecycleState.resumed) {
+      _lastResumeTime = DateTime.now();
+    }
+  }
+
+  void _updateActiveSeconds() {
+    if (_lastResumeTime != null) {
+      _activeSeconds += DateTime.now().difference(_lastResumeTime!).inSeconds;
+      _lastResumeTime = null;
+    }
   }
 
   @override
@@ -157,23 +177,24 @@ class _MyReaderPageState extends State<ReaderScreen> {
   }
 
   void _saveSession() {
-    if (_sessionStartTime == null) return;
+    _updateActiveSeconds();
 
-    final endTime = DateTime.now();
-    final duration = endTime.difference(_sessionStartTime!);
-
-    // Only save if session lasted more than 10 seconds to avoid noise
-    if (duration.inSeconds > 10) {
+    // Only save if session lasted more than 5 seconds
+    if (_activeSeconds > 5) {
       final state = StoreProvider.of<AppState>(context).state;
       final session = ReadingSession(
         pathId: state.pathId,
         pathTitle: state.pathTitle,
-        startTime: _sessionStartTime!,
-        endTime: endTime,
-        durationSeconds: duration.inSeconds,
+        startTime: DateTime.now().subtract(Duration(seconds: _activeSeconds)),
+        endTime: DateTime.now(),
+        durationSeconds: _activeSeconds,
       );
-      StoreProvider.of<AppState>(context).dispatch(SaveReadingSessionAction(session));
+      StoreProvider.of<AppState>(context).dispatch(
+        SaveReadingSessionAction(session, DateTime.now()),
+      );
     }
+    // Clear segments after saving
+    _activeSeconds = 0;
   }
 
   @override
