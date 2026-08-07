@@ -102,13 +102,18 @@ class HomeScreen extends StatelessWidget {
                     fit: BoxFit.fill,
                     width: AppConstants.HOME_FLORAL_WIDTH,
                   ),
-                  Text(
-                    AppConstants.HOME_TITLE_TEXT,
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(
-                      fontFamily: AppConstants.HOME_TITLE_FONT,
-                      fontSize: getTitleFontSize(context),
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        AppConstants.HOME_TITLE_TEXT,
+                        textAlign: TextAlign.center,
+                        style: new TextStyle(
+                          fontFamily: AppConstants.HOME_TITLE_FONT,
+                          fontSize: getTitleFontSize(context),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                   new Image.asset(
