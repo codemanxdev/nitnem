@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:nitnem/navigation/approute.dart';
+import 'package:nitnem/pages/about.dart';
 import 'package:nitnem/pages/baaniorderscreen.dart';
 import 'package:nitnem/pages/homescreen.dart';
 import 'package:nitnem/pages/options.dart';
@@ -89,6 +90,10 @@ class NitnemApp extends StatelessWidget {
       AppRoute(
         routeName: '/stats',
         buildRoute: (BuildContext context) => StatsScreen(key: _statsScreenKey),
+      ),
+      AppRoute(
+        routeName: '/about',
+        buildRoute: (BuildContext context) => const AboutScreen(),
       ),
     ];
     return routes;

@@ -10,7 +10,6 @@ import 'package:nitnem/redux/actions/actions.dart';
 import 'package:nitnem/state/appstate.dart';
 
 import '../navigation/appnavigator.dart';
-import 'about.dart';
 
 const double _kItemHeight = 4.0;
 const EdgeInsetsDirectional _kItemPadding = EdgeInsetsDirectional.only(
@@ -438,12 +437,26 @@ class OptionsPage extends StatelessWidget {
     final aboutWidgets = <Widget>[
       const Divider(),
       const _Heading('About'),
-      _ActionItem('About Nitnem', () {
-        aboutNitnem(context);
-      }),
-      _ActionItem('Send feedback', () {
-        StoreProvider.of<AppState>(context).dispatch(SendFeedbackAction());
-      }),
+      _OptionsItem(
+        child: Wrap(
+          spacing: 12.0,
+          runSpacing: 12.0,
+          children: [
+            _FlatButton(
+              onPressed: () => AppNavigator.goToAbout(context),
+              key: UniqueKey(),
+              child: const Text('About Nitnem'),
+            ),
+            _FlatButton(
+              onPressed: () => StoreProvider.of<AppState>(context).dispatch(
+                SendFeedbackAction(),
+              ),
+              key: UniqueKey(),
+              child: const Text('Send feedback'),
+            ),
+          ],
+        ),
+      ),
     ];
 
     printInfoMessage('[BUILD] Options Completed');
