@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nitnem/redux/store/store.dart';
+import 'package:nitnem/state/appoptions.dart';
 import 'package:nitnem/state/appstate.dart';
 
 import '../lib/models/pathtile.dart';
@@ -24,7 +25,7 @@ void main() {
         optionsPage: OptionsPage(key: UniqueKey(), readerMode: false),
         key: UniqueKey(),
       );
-      var store = await createStore();
+      var store = createStore(AppOptions.initial());
       await tester.pumpWidget(
         makeTestableWidget(
           child: StoreProvider<AppState>(store: store, child: screen),

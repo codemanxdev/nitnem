@@ -52,11 +52,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     printInfoMessage('[BUILD] SplashScreen');
+    final theme = Theme.of(context);
+    final onPrimary = theme.colorScheme.onPrimary;
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Container(decoration: BoxDecoration(color: Colors.blue.shade900)),
+          Container(decoration: BoxDecoration(color: theme.primaryColor)),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -84,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Text(
                   AppConstants.SPLASH_TITLE_TEXT,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: onPrimary,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Kingthings',
                     fontSize: AppConstants.SPLASH_TITLE_TEXT_SIZE,
@@ -106,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           fontWeight: FontWeight.w400,
                           fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
                           fontFamily: 'Sansation',
-                          color: Colors.white,
+                          color: onPrimary,
                         ),
                       ),
                     ),
@@ -118,7 +121,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    CircularProgressIndicator(),
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(onPrimary),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Text(
@@ -128,7 +133,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.w300,
                           fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
-                          color: Colors.white,
+                          color: onPrimary,
                         ),
                       ),
                     ),

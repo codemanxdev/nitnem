@@ -10,11 +10,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nitnem/app.dart';
 import 'package:nitnem/constants/appconstants.dart';
 import 'package:nitnem/redux/store/store.dart';
+import 'package:nitnem/state/appoptions.dart';
 
 void main() {
   testWidgets('TEST - [SplashScreen]', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    var store = await createStore();
+    var store = createStore(AppOptions.initial());
     await tester.pumpWidget(NitnemApp(store));
 
     // Verify that our splash screen has the nitnem title.

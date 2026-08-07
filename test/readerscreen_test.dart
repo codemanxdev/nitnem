@@ -3,6 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nitnem/pages/readerscreen.dart';
 import 'package:nitnem/redux/store/store.dart';
+import 'package:nitnem/state/appoptions.dart';
 import 'package:nitnem/state/appstate.dart';
 
 import 'maketestablewidget.dart';
@@ -12,7 +13,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.runAsync(() async {
-      var store = await createStore();
+      var store = createStore(AppOptions.initial());
       ReaderScreen screen = ReaderScreen(key: UniqueKey());
       await tester.pumpWidget(
         makeTestableWidget(
