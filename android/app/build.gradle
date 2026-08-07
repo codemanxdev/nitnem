@@ -30,6 +30,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.manpreet.nitnem"
     compileSdkVersion 36
+    ndkVersion = "28.2.13676358"
 
     lintOptions {
         disable 'InvalidPackage'
