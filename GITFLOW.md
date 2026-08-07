@@ -1,1 +1,1 @@
-git checkout master && git pull origin master && git merge --ff-only develop && git push origin main && git checkout develop
+git checkout master && git pull origin master && git merge --ff-only develop && git push origin master && git checkout develop
