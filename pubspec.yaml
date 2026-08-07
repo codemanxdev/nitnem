@@ -33,7 +33,6 @@ dependencies:
   provider: ^6.1.2
   cupertino_icons: ^1.0.2
   wakelock_plus: ^1.6.1
-  font_awesome_flutter: ^11.0.0
   fl_chart: ^0.70.0
 
 dev_dependencies:

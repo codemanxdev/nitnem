@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitnem/common/printmessage.dart';
 import 'package:nitnem/constants/appconstants.dart';
 import 'package:nitnem/models/pathtile.dart';
@@ -34,7 +33,7 @@ class BaaniOrderScreen extends StatelessWidget {
           fontWeight: FontWeight.w700,
         ),
       ),
-      trailing: FaIcon(FontAwesomeIcons.bars),
+      trailing: Icon(Icons.reorder),
       subtitle: Text(
         item.gurmukhi,
         style: new TextStyle(
@@ -64,8 +63,10 @@ class BaaniOrderScreen extends StatelessWidget {
           key: _baaniOrderScreenScaffoldKey,
           appBar: AppBar(
             backgroundColor: theme.primaryColor,
+            iconTheme: theme.primaryIconTheme,
             centerTitle: true,
             title: Text("Change Baani Order"),
+            titleTextStyle: theme.appBarTheme.titleTextStyle,
             actions: <Widget>[
               IconButton(
                 icon: const Icon(Icons.undo),

@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:nitnem/common/printmessage.dart';
 import 'package:nitnem/constants/appconstants.dart';
@@ -257,9 +256,10 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
                         iconTheme: theme.primaryIconTheme,
                         actions: <Widget>[
                           IconButton(
-                            icon: FaIcon(
-                              FontAwesomeIcons.sliders,
-                              color: theme.primaryIconTheme.color ?? Colors.white,
+                            icon: Icon(
+                              Icons.tune,
+                              color:
+                                  theme.primaryIconTheme.color ?? Colors.white,
                             ),
                             onPressed: vm.onToggleReaderOptions,
                           ),
