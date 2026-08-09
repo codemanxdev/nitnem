@@ -18,7 +18,7 @@ class BaaniOrderScreen extends StatelessWidget {
 
   Widget buildNitnemTile(BuildContext context, PathTile item) {
     var listTile = ListTile(
-      key: UniqueKey(),
+      key: ValueKey(item.id),
       onTap: () => (),
       dense: false,
       leading: const Text(

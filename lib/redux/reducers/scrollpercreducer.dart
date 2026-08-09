@@ -7,8 +7,7 @@ final scrollPercReducer = combineReducers<Map<String, ScrollInfo>>([
 ]);
 
 Map<String, ScrollInfo> _activeScrollPercReducer(Map<String, ScrollInfo> info, UpdateStatusScrollPercentageAction action) {
-  //construct the complete map from the info present in action ScrollInfo and return the map
-  Map<String, ScrollInfo> newScrollPos = info;
-  newScrollPos.update(action.scrollInfo.id.toString(), (ScrollInfo val) => action.scrollInfo);
-  return newScrollPos;
+  // Return a new map to ensure immutability
+  return Map<String, ScrollInfo>.from(info)
+    ..update(action.scrollInfo.id.toString(), (ScrollInfo val) => action.scrollInfo);
 }

@@ -76,7 +76,6 @@ AppState appReducer(AppState state, dynamic action) {
       pathTitle: pathTitleReducer(state.pathTitle, action),
       pathId: pathIdReducer(state.pathId, action),
     );
-    printInfoMessage('Option Changed');
   }
 
   if (action is OptionsLoadedAction) {
@@ -90,6 +89,5 @@ AppState appReducer(AppState state, dynamic action) {
     launchUrl(Uri.parse(AppConstants.FEEDBACK_URL));
   }
 
-  printInfoMessage('[STATE] ${newState.toString()}');
   return newState;
 }

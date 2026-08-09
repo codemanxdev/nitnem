@@ -97,7 +97,7 @@ class _ActionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _OptionsItem(
-      child: _FlatButton(onPressed: onTap, key: UniqueKey(), child: Text(text)),
+      child: _FlatButton(onPressed: onTap, key: ValueKey(text), child: Text(text)),
     );
   }
 }
@@ -444,14 +444,14 @@ class OptionsPage extends StatelessWidget {
           children: [
             _FlatButton(
               onPressed: () => AppNavigator.goToAbout(context),
-              key: UniqueKey(),
+              key: const ValueKey('about_nitnem'),
               child: const Text('About Nitnem'),
             ),
             _FlatButton(
               onPressed: () => StoreProvider.of<AppState>(context).dispatch(
                 SendFeedbackAction(),
               ),
-              key: UniqueKey(),
+              key: const ValueKey('send_feedback'),
               child: const Text('Send feedback'),
             ),
           ],

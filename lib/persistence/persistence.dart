@@ -53,7 +53,7 @@ Future<AppOptions> loadOptionsFromPrefs() async {
     }
   }
 
-  printInfoMessage('[OPTIONS LOADED: ${options.toString()}');
+  printInfoMessage('[OPTIONS LOADED]');
   return options;
 }
 
@@ -64,7 +64,7 @@ void saveOptionsToPrefs(AppOptions options) async {
     AppConstants.OPTIONS_SHAREDPREF_KEY,
     optionsString,
   );
-  printInfoMessage('[OPTIONS SAVED]: ${options.toString()}');
+  printInfoMessage('[OPTIONS SAVED]');
 }
 
 Map<String, ScrollInfo> constructScrollPosMap(String scrollPosString) {

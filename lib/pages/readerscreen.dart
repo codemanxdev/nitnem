@@ -52,6 +52,12 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
     _startBatteryUpdateTimer();
     _updateBatteryLevel();
     _updateCurrentTime();
+
+    //Only the bottom UI overlay is enabled, hiding the system status bar when in reading pane
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom],
+    );
   }
 
   @override
@@ -203,11 +209,6 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
 
     printInfoMessage('[BUILD] ReaderScreen');
     printInfoMessage('[STATE] Battery: $_batteryLevel, Time: $_currentTime');
-    //Only the bottom UI overlay is enabled, hiding the system status bar when in reading pane
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: [SystemUiOverlay.bottom],
-    );
 
     var result = PopScope(
       canPop: true,
@@ -455,6 +456,7 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
   @override
   @mustCallSuper
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     //All overlays are enabled with the system status bar when in home screen
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,

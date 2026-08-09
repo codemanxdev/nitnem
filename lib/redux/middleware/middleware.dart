@@ -52,7 +52,10 @@ void storeOptionsMiddleware(
   }
 
   if (action is UpdateStatusScrollPercentageAction) {
-    Map<String, ScrollInfo> scrollPos = state.options.scrollOffset;
+    // Return a new map to ensure immutability
+    Map<String, ScrollInfo> scrollPos = Map<String, ScrollInfo>.from(
+      state.options.scrollOffset,
+    );
     scrollPos.update(
       action.scrollInfo.id.toString(),
       (ScrollInfo val) => action.scrollInfo,
