@@ -68,6 +68,61 @@ void main() {
     await binding.convertFlutterSurfaceToImage();
     await tester.pump(const Duration(milliseconds: 500));
 
+    // Helper to capture screenshot without pointer/crosshair and at top
+    Future<void> capture(String name) async {
+      print('📸 Capturing $name...');
+      
+      // Ensure we are at the top of the scroll view for reader screens
+      try {
+        final scrollableFinder = find.byType(Scrollable);
+        if (scrollableFinder.evaluate().isNotEmpty) {
+          final ScrollableState state = tester.state(scrollableFinder.last);
+          state.position.jumpTo(0.0);
+          await tester.pump();
+        }
+      } catch (e) {
+        print('⚠️ Could not reset scroll position for $name');
+      }
+
+      // Wait for any animations and pointer indicators to clear
+      // pumpAndSettle with a duration ensures transient tap indicators fade out
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      
+      await binding.takeScreenshot(name);
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+
+    // Helper to tap and wait for state change
+    Future<void> tapChip(String label, {bool isTheme = false, String? expectedValue}) async {
+      print('🔘 Selecting ${isTheme ? "theme" : "language"}: $label...');
+      final String targetValue = isTheme ? expectedValue! : label;
+      
+      // We use dispatch as the primary mechanism because DeviceFrame scaling + SliverAppBar FlexibleSpace
+      // makes UI hit-testing extremely fragile in integration tests.
+      if (isTheme) {
+        store.dispatch(ChangeThemeAction(targetValue));
+      } else {
+        store.dispatch(ChangeLanguageAndFetchNitnemPathAction(targetValue, store.state.pathFilePrefix));
+      }
+      
+      await tester.pumpAndSettle();
+      
+      // Visually update the UI if possible, but don't fail if it's tricky
+      try {
+        final chipFinder = find.widgetWithText(ChoiceChip, label, skipOffstage: false);
+        if (chipFinder.evaluate().isNotEmpty) {
+          // We just pump enough to show the selection visually if needed, 
+          // but we won't tap if it might disturb the scroll position.
+          await tester.pumpAndSettle();
+        }
+      } catch (e) {}
+      
+      // Guarantee any async loading (assets/fonts/images) has time to settle
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+    }
+
     // 1. Options (Home Screen Backdrop)
     print('🎨 Selecting Default Theme via UI...');
     final backdropToggle = find.byType(BackdropToggleButton).first;
@@ -80,57 +135,21 @@ void main() {
     await tester.tap(defaultTheme, warnIfMissed: false);
     await tester.pumpAndSettle();
 
-    print('📸 Capturing Options Screen...');
-    await binding.takeScreenshot('options');
-    await tester.pump(const Duration(milliseconds: 500));
+    await capture('options');
 
     // 2. Main Screen
     print('🔘 Closing options menu...');
     await tester.tap(backdropToggle);
     await tester.pumpAndSettle();
 
-    print('📸 Capturing Main Screen...');
-    await binding.takeScreenshot('mainscreen');
-    await tester.pump(const Duration(milliseconds: 500));
+    await capture('mainscreen');
 
     // 3. Reader Screen (Gurmukhi) - Tap 'Japji Sahib'
     print('📖 Opening Japji Sahib...');
     await tester.tap(find.text('Japji Sahib'));
     await tester.pumpAndSettle();
 
-    print('📸 Capturing Path Gurmukhi...');
-    await binding.takeScreenshot('path-gurmukhi');
-    await tester.pump(const Duration(milliseconds: 500));
-
-    // Helper to tap and wait for state change
-    Future<void> tapChip(String label, {bool isTheme = false, String? expectedValue}) async {
-      print('🔘 Selecting ${isTheme ? "theme" : "language"}: $label...');
-      
-      final String targetValue = isTheme ? expectedValue! : label;
-      
-      // Use dispatch directly for maximum reliability in reader screen
-      // UI tapping in a nested ListView within a SliverAppBar under DeviceFrame is inherently flaky
-      if (isTheme) {
-        store.dispatch(ChangeThemeAction(targetValue));
-      } else {
-        store.dispatch(ChangeLanguageAndFetchNitnemPathAction(targetValue, store.state.pathFilePrefix));
-      }
-      
-      // Wait for state change and any async work
-      for (int i = 0; i < 20; i++) {
-        await tester.pump(const Duration(milliseconds: 200));
-        final currentState = isTheme ? store.state.options.themeName : store.state.options.languageName;
-        if (currentState == targetValue) {
-          print('✅ State confirmed updated to $targetValue');
-          break;
-        }
-      }
-      
-      await tester.pumpAndSettle();
-      // Additional wait for potential asset loading (background image or path text)
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
-    }
+    await capture('path-gurmukhi');
 
     // 4. Path Hindi
     print('🔘 Switching to Hindi via UI...');
@@ -148,9 +167,7 @@ void main() {
     await tester.tap(optionsButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
-    print('📸 Capturing Path Hindi...');
-    await binding.takeScreenshot('path-hindi');
-    await tester.pump(const Duration(milliseconds: 500));
+    await capture('path-hindi');
 
     // 5. Path English
     print('🔘 Switching to English via UI...');
@@ -163,9 +180,7 @@ void main() {
     await tester.tap(optionsButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
-    print('📸 Capturing Path English...');
-    await binding.takeScreenshot('path-english');
-    await tester.pump(const Duration(milliseconds: 500));
+    await capture('path-english');
 
     // --- Themes ---
     
@@ -180,9 +195,7 @@ void main() {
     await tester.tap(optionsButton, warnIfMissed: false);
     await tester.pumpAndSettle();
     
-    print('📸 Capturing Forest Theme...');
-    await binding.takeScreenshot('foresttheme');
-    await tester.pump(const Duration(milliseconds: 500));
+    await capture('foresttheme');
 
     // 7. Wood Theme
     print('🎨 Switching to Wood Theme via UI...');
@@ -195,9 +208,7 @@ void main() {
     await tester.tap(optionsButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
-    print('📸 Capturing Wood Theme...');
-    await binding.takeScreenshot('woodtheme');
-    await tester.pump(const Duration(milliseconds: 500));
+    await capture('woodtheme');
 
     // 8. Stars Theme (Dark) on Main Screen
     print('🏠 Going back to Home Screen for Dark Theme...');
@@ -222,9 +233,7 @@ void main() {
     await tester.tap(homeBackdropToggle);
     await tester.pumpAndSettle();
 
-    print('📸 Capturing Dark Theme (Main Screen)...');
-    await binding.takeScreenshot('darktheme');
-    await tester.pump(const Duration(milliseconds: 500));
+    await capture('darktheme');
 
     print('✅ Screenshot generation complete!');
   });

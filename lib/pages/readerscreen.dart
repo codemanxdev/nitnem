@@ -268,7 +268,7 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
                         expandedHeight:
                             vm.showReaderOptions
                                 ? AppConstants.EXPANDED_APP_BAR
-                                : AppConstants.COLLAPSED_APP_BAR,
+                                : kToolbarHeight,
                         flexibleSpace: FlexibleSpaceBar(
                           title: Text(
                             (vm.showReaderOptions)
