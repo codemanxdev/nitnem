@@ -257,6 +257,7 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
                         iconTheme: theme.primaryIconTheme,
                         actions: <Widget>[
                           IconButton(
+                            key: const Key('reader_options_button'),
                             icon: Icon(
                               Icons.tune,
                               color:

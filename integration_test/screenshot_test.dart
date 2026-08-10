@@ -1,23 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:nitnem/main.dart' as app;
+import 'package:nitnem/app.dart';
+import 'package:nitnem/persistence/persistence.dart';
+import 'package:nitnem/redux/actions/actions.dart';
+import 'package:nitnem/redux/store/store.dart';
 import 'package:backdrop/backdrop.dart';
+import 'package:device_frame/device_frame.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Capture screenshots for Play Store', (WidgetTester tester) async {
-    print('🚀 Initializing app...');
-    app.main();
-    await tester.pump(); // Initial pump to start the app
+    print('🚀 Initializing app with device frame...');
+    
+    // Initialize state manually to wrap the app in a DeviceFrame
+    final options = await loadOptionsFromPrefs();
+    final store = createStore(options);
+    store.dispatch(OptionsLoadedAction(options));
+    
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Container(
+          color: const Color(0xFFF5F5F7), // Neutral background
+          child: DeviceFrame(
+            device: Devices.android.googlePixel9,
+            isFrameVisible: true,
+            orientation: Orientation.portrait,
+            screen: NitnemApp(store),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
 
     print('⏳ Waiting for home screen...');
     // Wait for the Japji Sahib text to appear, which confirms we are on the home screen
-    // We use a loop with pump(duration) instead of pumpAndSettle to avoid hanging on infinite animations
     bool homeScreenVisible = false;
     for (int i = 0; i < 50; i++) {
       await tester.pump(const Duration(milliseconds: 200));
+      // Need to find text even if it is inside the device frame's screen
       if (find.text('Japji Sahib').evaluate().isNotEmpty) {
         homeScreenVisible = true;
         break;
@@ -30,7 +53,6 @@ void main() {
     }
     
     print('✅ Home screen reached');
-    // Give it a bit more time to settle
     await tester.pump(const Duration(seconds: 1));
 
     // Required for Android screenshots
@@ -47,7 +69,6 @@ void main() {
     print('🔘 Tapping Options toggle...');
     final backdropToggle = find.byType(BackdropToggleButton).first;
     await tester.tap(backdropToggle);
-    // Use a fixed pump duration in case of infinite animations
     await tester.pump(const Duration(milliseconds: 1000));
     await tester.pumpAndSettle();
 
@@ -71,23 +92,26 @@ void main() {
 
     // Open Reader Options
     print('🔘 Opening Reader Options...');
-    final readerOptions = find.byIcon(Icons.tune);
+    final readerOptions = find.byKey(const Key('reader_options_button'));
     await tester.tap(readerOptions);
     await tester.pumpAndSettle();
 
     // 4. Path Hindi
     print('🔘 Switching to Hindi...');
+    // We use a broader finder and ensure it's the one in the reader options
     final hindiOption = find.text('Hindi', skipOffstage: false).last;
     await tester.dragUntilVisible(
       hindiOption,
       find.byType(ListView).last,
       const Offset(0, -100),
     );
-    await tester.tap(hindiOption);
+    await tester.tap(hindiOption, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     // Close options to see the text clearly
-    await tester.tap(readerOptions);
+    print('🔘 Closing Reader Options...');
+    final closeButton = find.byKey(const Key('reader_options_button'), skipOffstage: false).last;
+    await tester.tap(closeButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     print('📸 Capturing Path Hindi...');
@@ -96,7 +120,7 @@ void main() {
 
     // 5. Path English
     print('🔘 Switching to English...');
-    await tester.tap(readerOptions);
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
     await tester.pumpAndSettle();
     final englishOption = find.text('English', skipOffstage: false).last;
     await tester.dragUntilVisible(
@@ -104,10 +128,10 @@ void main() {
       find.byType(ListView).last,
       const Offset(0, -100),
     );
-    await tester.tap(englishOption);
+    await tester.tap(englishOption, warnIfMissed: false);
     await tester.pumpAndSettle();
     
-    await tester.tap(readerOptions);
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     print('📸 Capturing Path English...');
@@ -115,7 +139,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // --- Themes ---
-    await tester.tap(readerOptions);
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     // 6. Forest Theme
@@ -126,34 +150,53 @@ void main() {
       find.byType(ListView).last,
       const Offset(0, -100),
     );
-    await tester.tap(forestTheme);
+    await tester.tap(forestTheme, warnIfMissed: false);
     await tester.pumpAndSettle();
+    
+    // Close options
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
+    await tester.pumpAndSettle();
+    
     await binding.takeScreenshot('foresttheme');
     await tester.pump(const Duration(milliseconds: 500));
 
     // 7. Stars Theme (Dark)
     print('🎨 Switching to Stars Theme...');
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
+    await tester.pumpAndSettle();
     final starsTheme = find.text('Stars', skipOffstage: false).last;
     await tester.dragUntilVisible(
       starsTheme,
       find.byType(ListView).last,
       const Offset(0, -100),
     );
-    await tester.tap(starsTheme);
+    await tester.tap(starsTheme, warnIfMissed: false);
     await tester.pumpAndSettle();
+
+    // Close options
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
     await binding.takeScreenshot('darktheme');
     await tester.pump(const Duration(milliseconds: 500));
 
     // 8. Wood Theme
     print('🎨 Switching to Wood Theme...');
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
+    await tester.pumpAndSettle();
     final woodTheme = find.text('Wood', skipOffstage: false).last;
     await tester.dragUntilVisible(
       woodTheme,
       find.byType(ListView).last,
       const Offset(0, -100),
     );
-    await tester.tap(woodTheme);
+    await tester.tap(woodTheme, warnIfMissed: false);
     await tester.pumpAndSettle();
+
+    // Close options
+    await tester.tap(find.byKey(const Key('reader_options_button'), skipOffstage: false).last, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
     await binding.takeScreenshot('woodtheme');
     await tester.pump(const Duration(milliseconds: 500));
 

@@ -31,26 +31,25 @@ class NitnemApp extends StatelessWidget {
       store: store,
       child: new StoreConnector<AppState, _ViewModel>(
         converter: _ViewModel.fromStore,
-        builder:
-            (context, vm) => MaterialApp(
-              title: 'Nitnem App',
-              debugShowCheckedModeBanner: false,
-              theme: getThemeByName(vm.themeName).data,
-              color: Colors.grey,
-              home: SplashScreen(),
-              routes: _buildRoutes(),
-              builder: (BuildContext context, Widget? child) {
-                return Directionality(
-                  child: CupertinoTheme(
-                    data: CupertinoThemeData(
-                      brightness: getThemeByName(vm.themeName).data.brightness,
-                    ),
-                    child: child!,
-                  ),
-                  textDirection: TextDirection.ltr,
-                );
-              },
-            ),
+        builder: (context, vm) => MaterialApp(
+          title: 'Nitnem App',
+          debugShowCheckedModeBanner: false,
+          theme: getThemeByName(vm.themeName).data,
+          color: Colors.grey,
+          home: SplashScreen(),
+          routes: _buildRoutes(),
+          builder: (BuildContext context, Widget? child) {
+            return Directionality(
+              child: CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: getThemeByName(vm.themeName).data.brightness,
+                ),
+                child: child!,
+              ),
+              textDirection: TextDirection.ltr,
+            );
+          },
+        ),
       ),
     );
   }
