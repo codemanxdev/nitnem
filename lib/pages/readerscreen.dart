@@ -237,11 +237,7 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
                     BlendMode.dstATop,
                   ),
                   image: new AssetImage(
-                    "assets/themes/" +
-                        StoreProvider.of<AppState>(
-                          context,
-                        ).state.options.themeName +
-                        ".jpg",
+                    "assets/themes/" + vm.themeName + ".jpg",
                   ),
                   repeat: ImageRepeat.repeat,
                 ),
@@ -473,6 +469,7 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
 class _ViewModel {
   final void Function() onToggleReaderOptions;
   final String languageName;
+  final String themeName;
   final bool showReaderOptions;
   final double textScaleValue;
   final bool isBold;
@@ -486,6 +483,7 @@ class _ViewModel {
   _ViewModel({
     required this.onToggleReaderOptions,
     required this.languageName,
+    required this.themeName,
     required this.showReaderOptions,
     required this.textScaleValue,
     required this.isBold,
@@ -503,6 +501,7 @@ class _ViewModel {
         store.dispatch(ToggleReaderOptionsAction());
       },
       languageName: languageSelector(store.state),
+      themeName: store.state.options.themeName,
       showReaderOptions: showReaderOptionSelector(store.state),
       textScaleValue: textScaleValueSelector(store.state),
       isBold: isBoldSelector(store.state),
@@ -521,6 +520,7 @@ class _ViewModel {
       other is _ViewModel &&
           runtimeType == other.runtimeType &&
           languageName == other.languageName &&
+          themeName == other.themeName &&
           showReaderOptions == other.showReaderOptions &&
           textScaleValue == other.textScaleValue &&
           isBold == other.isBold &&
@@ -534,6 +534,7 @@ class _ViewModel {
   int get hashCode =>
       runtimeType.hashCode ^
       languageName.hashCode ^
+      themeName.hashCode ^
       showReaderOptions.hashCode ^
       textScaleValue.hashCode ^
       isBold.hashCode ^
