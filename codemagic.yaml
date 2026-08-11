@@ -47,7 +47,7 @@ workflows:
       - flutter packages pub get
       - flutter config --enable-web
       - flutter test
-      - flutter build appbundle --release --build-name=3.1.$(($BUILD_NUMBER + 300)) --build-number=$(($BUILD_NUMBER + 300))
+      - flutter build appbundle --release --build-name=3.2.$(($BUILD_NUMBER + 300)) --build-number=$(($BUILD_NUMBER + 300))
       - find . -name "Podfile" -execdir pod install \;
       # build web
       - flutter build web --release
