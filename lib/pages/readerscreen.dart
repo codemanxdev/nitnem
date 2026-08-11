@@ -337,90 +337,90 @@ class _MyReaderPageState extends State<ReaderScreen> with WidgetsBindingObserver
                       data: MediaQuery.of(
                         context,
                       ).copyWith(textScaler: TextScaler.linear(1.0)),
-                      child: new Container(
-                        height:
-                            (defaultTargetPlatform == TargetPlatform.android)
-                                ? 20.0
-                                : 50.0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(
-                            AppConstants.STATUSBAR_PADDING,
-                          ),
-                          child: new Row(
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: new Row(
-                                  children: <Widget>[
-                                    (defaultTargetPlatform ==
-                                            TargetPlatform.android)
-                                        ? Icon(Icons.battery_std, size: 12)
-                                        : Container(),
-                                    Text(
-                                      _batteryLevel + "%",
-                                      textAlign: TextAlign.left,
-                                      style: new TextStyle(
-                                        fontFamily:
-                                            AppConstants.STATUSBAR_FONT_FAMILY,
-                                        fontSize:
-                                            AppConstants.STATUSBAR_FONT_SIZE,
-                                        fontWeight: FontWeight.normal,
+                      child: SafeArea(
+                        top: false,
+                        child: new Container(
+                          height: 30.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(
+                              AppConstants.STATUSBAR_PADDING,
+                            ),
+                            child: new Row(
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 1,
+                                  child: new Row(
+                                    children: <Widget>[
+                                      (defaultTargetPlatform ==
+                                              TargetPlatform.android)
+                                          ? Icon(Icons.battery_std, size: 12)
+                                          : Container(),
+                                      Text(
+                                        _batteryLevel + "%",
+                                        textAlign: TextAlign.left,
+                                        style: new TextStyle(
+                                          fontFamily:
+                                              AppConstants.STATUSBAR_FONT_FAMILY,
+                                          fontSize:
+                                              AppConstants.STATUSBAR_FONT_SIZE,
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                       ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    _currentTime,
+                                    textAlign: TextAlign.left,
+                                    style: new TextStyle(
+                                      fontFamily:
+                                          AppConstants.STATUSBAR_FONT_FAMILY,
+                                      fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                                      fontWeight: FontWeight.normal,
                                     ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  _currentTime,
-                                  textAlign: TextAlign.left,
-                                  style: new TextStyle(
-                                    fontFamily:
-                                        AppConstants.STATUSBAR_FONT_FAMILY,
-                                    fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                    fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                flex: 5,
-                                child: Text(
-                                  vm.nitnemPathTitle,
-                                  textAlign: TextAlign.center,
-                                  style: new TextStyle(
-                                    fontFamily:
-                                        AppConstants.STATUSBAR_FONT_FAMILY,
-                                    fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                    fontWeight: FontWeight.normal,
+                                Expanded(
+                                  flex: 5,
+                                  child: Text(
+                                    vm.nitnemPathTitle,
+                                    textAlign: TextAlign.center,
+                                    style: new TextStyle(
+                                      fontFamily:
+                                          AppConstants.STATUSBAR_FONT_FAMILY,
+                                      fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                                      fontWeight: FontWeight.normal,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                flex:
-                                    (defaultTargetPlatform ==
-                                            TargetPlatform.android)
-                                        ? 1
-                                        : 2,
-                                child: Text(
-                                  _calculateScrollPerc(
-                                        vm.scrollOffset,
-                                        vm.maxOffset,
-                                      ) +
-                                      "%",
-                                  textAlign: TextAlign.center,
-                                  style: new TextStyle(
-                                    fontFamily:
-                                        AppConstants.STATUSBAR_FONT_FAMILY,
-                                    fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                    fontWeight: FontWeight.normal,
+                                Expanded(
+                                  flex:
+                                      (defaultTargetPlatform ==
+                                              TargetPlatform.android)
+                                          ? 1
+                                          : 2,
+                                  child: Text(
+                                    _calculateScrollPerc(
+                                          vm.scrollOffset,
+                                          vm.maxOffset,
+                                        ) +
+                                        "%",
+                                    textAlign: TextAlign.center,
+                                    style: new TextStyle(
+                                      fontFamily:
+                                          AppConstants.STATUSBAR_FONT_FAMILY,
+                                      fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                                      fontWeight: FontWeight.normal,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          color: AppConstants.STATUSBAR_BACK_COLOR,
                         ),
-                        color: AppConstants.STATUSBAR_BACK_COLOR,
                       ),
                     )
                     : null,

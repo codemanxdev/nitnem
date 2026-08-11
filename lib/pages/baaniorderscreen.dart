@@ -82,19 +82,22 @@ class BaaniOrderScreen extends StatelessWidget {
               ),
             ],
           ),
-          body: Scrollbar(
-            child: ReorderableListView(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              onReorderItem: (int oldIndex, int newIndex) {
-                if (newIndex > oldIndex) newIndex -= 1;
-                final element = PathTileData.items.removeAt(oldIndex);
-                PathTileData.items.insert(newIndex, element);
-                printInfoMessage(
-                  "Baani Order Changed To: ${PathTileData.items}",
-                );
-                vm.onOrderChangeAction(context);
-              },
-              children: listTiles.toList(),
+          body: SafeArea(
+            bottom: true,
+            child: Scrollbar(
+              child: ReorderableListView(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                onReorderItem: (int oldIndex, int newIndex) {
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  final element = PathTileData.items.removeAt(oldIndex);
+                  PathTileData.items.insert(newIndex, element);
+                  printInfoMessage(
+                    "Baani Order Changed To: ${PathTileData.items}",
+                  );
+                  vm.onOrderChangeAction(context);
+                },
+                children: listTiles.toList(),
+              ),
             ),
           ),
         );

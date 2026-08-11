@@ -32,36 +32,39 @@ class _StatsScreenState extends State<StatsScreen> {
             centerTitle: true,
             titleTextStyle: theme.appBarTheme.titleTextStyle,
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildGoalAndStreak(context, vm),
-                  const SizedBox(height: 24),
-                  _buildSummaryCards(context, vm),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Activity',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      _buildRangeSelector(theme),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildChart(context, vm),
-                  const SizedBox(height: 32),
-                  const Text(
-                    'Recent Sessions',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildRecentSessions(context, vm),
-                ],
+          body: SafeArea(
+            bottom: true,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildGoalAndStreak(context, vm),
+                    const SizedBox(height: 24),
+                    _buildSummaryCards(context, vm),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Activity',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        _buildRangeSelector(theme),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _buildChart(context, vm),
+                    const SizedBox(height: 32),
+                    const Text(
+                      'Recent Sessions',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildRecentSessions(context, vm),
+                  ],
+                ),
               ),
             ),
           ),

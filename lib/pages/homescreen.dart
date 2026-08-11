@@ -142,10 +142,13 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           backLayer: optionsPage,
-          frontLayer: Scrollbar(
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              children: listTiles.toList(),
+          frontLayer: SafeArea(
+            bottom: true,
+            child: Scrollbar(
+              child: ListView(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                children: listTiles.toList(),
+              ),
             ),
           ),
         );

@@ -464,15 +464,18 @@ class OptionsPage extends StatelessWidget {
       style: theme.primaryTextTheme.bodySmall!.copyWith(
         fontSize: AppConstants.OPTIONS_LABEL_FONT_SIZE,
       ),
-      child: ListView(
-        padding: EdgeInsets.only(
-          top: this.readerMode ? kToolbarHeight + 10.0 : 0.0,
-          bottom: 124.0,
+      child: SafeArea(
+        top: false,
+        child: ListView(
+          padding: EdgeInsets.only(
+            top: this.readerMode ? kToolbarHeight + 10.0 : 0.0,
+            bottom: 124.0,
+          ),
+          children:
+              this.readerMode
+                  ? blankWidgets + optWidgets
+                  : optWidgets + aboutWidgets,
         ),
-        children:
-            this.readerMode
-                ? blankWidgets + optWidgets
-                : optWidgets + aboutWidgets,
       ),
     );
   }

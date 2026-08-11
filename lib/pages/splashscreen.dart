@@ -60,110 +60,112 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: <Widget>[
           Container(decoration: BoxDecoration(color: theme.primaryColor)),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 3,
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: getRadius() * 2,
-                        maxWidth: getRadius() * 2,
-                      ),
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: getRadius(),
-                          child: const SplashIcon(),
+          SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  flex: 3,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: getRadius() * 2,
+                          maxWidth: getRadius() * 2,
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: getRadius(),
+                            child: const SplashIcon(),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      AppConstants.SPLASH_TITLE_TEXT,
-                      style: TextStyle(
-                        color: onPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: AppConstants.SPLASH_TITLE_FONT,
-                        fontSize: AppConstants.SPLASH_TITLE_TEXT_SIZE,
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(
-                        AppConstants.SPLASH_SUBTITLE_TEXT,
-                        textAlign: TextAlign.center,
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppConstants.SPLASH_TITLE_TEXT,
                         style: TextStyle(
-                          color: onPrimary.withValues(alpha: 0.9),
-                          fontSize: AppConstants.SPLASH_SUBTITLE_TEXT_SIZE,
-                          fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        AppConstants.SPLASH_MESSAGE,
-                        softWrap: true,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
-                          fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
                           color: onPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: AppConstants.SPLASH_TITLE_FONT,
+                          fontSize: AppConstants.SPLASH_TITLE_TEXT_SIZE,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(onPrimary),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        'v' + _versionName,
-                        softWrap: true,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
-                          fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
-                          color: onPrimary,
+                      const SizedBox(height: 8.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Text(
+                          AppConstants.SPLASH_SUBTITLE_TEXT,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: onPrimary.withValues(alpha: 0.9),
+                            fontSize: AppConstants.SPLASH_SUBTITLE_TEXT_SIZE,
+                            fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text(
+                          AppConstants.SPLASH_MESSAGE,
+                          softWrap: true,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
+                            fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
+                            color: onPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(onPrimary),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Text(
+                          'v' + _versionName,
+                          softWrap: true,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: AppConstants.SPLASH_MESSAGE_FONT_SIZE,
+                            fontFamily: AppConstants.SPLASH_MESSAGE_FONT,
+                            color: onPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
