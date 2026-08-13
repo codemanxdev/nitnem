@@ -4,10 +4,19 @@ import 'package:integration_test/integration_test.dart';
 import 'package:nitnem/app.dart';
 import 'package:nitnem/pages/readerscreen.dart';
 import 'package:nitnem/persistence/persistence.dart';
-import 'package:nitnem/redux/actions/actions.dart';
-import 'package:nitnem/redux/store/store.dart';
+import 'package:nitnem/providers/settings_provider.dart';
+import 'package:nitnem/state/appoptions.dart';
 import 'package:backdrop/backdrop.dart';
 import 'package:device_frame/device_frame.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class MockSettings extends Settings {
+  final AppOptions initialOptions;
+  MockSettings(this.initialOptions);
+
+  @override
+  Future<AppOptions> build() async => initialOptions;
+}
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -17,31 +26,37 @@ void main() {
     
     // Initialize state manually to wrap the app in a DeviceFrame
     final options = await loadOptionsFromPrefs();
-    final store = createStore(options);
-    
-    // Set required options before starting
-    store.dispatch(OptionsLoadedAction(options));
-    store.dispatch(ToggleBoldAction(true));
-    store.dispatch(ToggleStatusAction(true));
-    store.dispatch(ToggleScreenAwakeAction(true));
-    store.dispatch(ToggleReadingPositionSaveAction(true));
-    store.dispatch(TextScaleAction(1.33));
     
     await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: Container(
-          color: Colors.transparent, // Transparent background for the frame
-          child: DeviceFrame(
-            device: Devices.android.googlePixel9,
-            isFrameVisible: true,
-            orientation: Orientation.portrait,
-            screen: NitnemApp(store),
+      ProviderScope(
+        overrides: [
+          settingsProvider.overrideWith(() => MockSettings(options)),
+        ],
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Container(
+            color: Colors.transparent, // Transparent background for the frame
+            child: DeviceFrame(
+              device: Devices.android.googlePixel9,
+              isFrameVisible: true,
+              orientation: Orientation.portrait,
+              screen: NitnemApp(),
+            ),
           ),
         ),
       ),
     );
     await tester.pump();
+
+    // Use container to access providers
+    final container = ProviderScope.containerOf(tester.element(find.byType(NitnemApp)));
+    
+    // Set required options before starting
+    await container.read(settingsProvider.notifier).toggleBold(true);
+    await container.read(settingsProvider.notifier).toggleStatus(true);
+    await container.read(settingsProvider.notifier).toggleScreenAwake(true);
+    await container.read(settingsProvider.notifier).toggleReadingPositionSave(true);
+    await container.read(settingsProvider.notifier).updateTextScale(1.33);
 
     print('⏳ Waiting for home screen...');
     // Wait for the Japji Sahib text to appear, which confirms we are on the home screen
@@ -85,8 +100,27 @@ void main() {
       }
 
       // Wait for any animations and pointer indicators to clear
-      // pumpAndSettle with a duration ensures transient tap indicators fade out
-      await tester.pump(const Duration(seconds: 3));
+      // Also wait for FutureProviders to resolve
+      // Specifically for reader screens, wait for the actual path text to appear
+      if (name.contains('path') || name.contains('theme')) {
+        bool loaded = false;
+        for (int i = 0; i < 40; i++) {
+          await tester.pump(const Duration(milliseconds: 500));
+          // Use a more robust check for the Baani text
+          final textFinder = find.byType(Text, skipOffstage: false);
+          final textWidgets = tester.widgetList<Text>(textFinder);
+          
+          for (final widget in textWidgets) {
+            final text = widget.data ?? '';
+            if (text.length > 200) { // Baanis are long
+              loaded = true;
+              break;
+            }
+          }
+          if (loaded) break;
+        }
+      }
+
       await tester.pumpAndSettle();
       
       await binding.takeScreenshot(name);
@@ -98,12 +132,12 @@ void main() {
       print('🔘 Selecting ${isTheme ? "theme" : "language"}: $label...');
       final String targetValue = isTheme ? expectedValue! : label;
       
-      // We use dispatch as the primary mechanism because DeviceFrame scaling + SliverAppBar FlexibleSpace
-      // makes UI hit-testing extremely fragile in integration tests.
+      final container = ProviderScope.containerOf(tester.element(find.byType(NitnemApp)));
+
       if (isTheme) {
-        store.dispatch(ChangeThemeAction(targetValue));
+        await container.read(settingsProvider.notifier).changeTheme(targetValue);
       } else {
-        store.dispatch(ChangeLanguageAndFetchNitnemPathAction(targetValue, store.state.pathFilePrefix));
+        await container.read(settingsProvider.notifier).changeLanguage(targetValue);
       }
       
       await tester.pumpAndSettle();

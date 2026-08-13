@@ -1,32 +1,17 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-@JsonSerializable()
-class PathTile {
-  int _id;
-  String _title;
-  String _gurmukhi;
-  String _filePrefix;
+part 'pathtile.freezed.dart';
+part 'pathtile.g.dart';
 
-  PathTile(this._id, this._title, this._gurmukhi, this._filePrefix);
+@freezed
+abstract class PathTile with _$PathTile {
+  const factory PathTile({
+    required int id,
+    required String title,
+    required String gurmukhi,
+    required String filePrefix,
+  }) = _PathTile;
 
-  int get id {
-    return _id;
-  }
-
-  String get title {
-    return _title;
-  }
-
-  String get gurmukhi {
-    return _gurmukhi;
-  }
-
-  String get filePrefix {
-    return _filePrefix;
-  }
-
-  @override
-  String toString() {
-    return 'PathTile{id: $_id, title: $_title}';
-  }
+  factory PathTile.fromJson(Map<String, dynamic> json) =>
+      _$PathTileFromJson(json);
 }

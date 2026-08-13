@@ -1,36 +1,16 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-@JsonSerializable()
-class ScrollInfo {
-  int _id;
-  double _scrollOffset;
-  double _maxOffset;
+part 'scrollinfo.freezed.dart';
+part 'scrollinfo.g.dart';
 
-  ScrollInfo(this._id, this._scrollOffset, this._maxOffset);
+@freezed
+abstract class ScrollInfo with _$ScrollInfo {
+  const factory ScrollInfo({
+    required int id,
+    required double scrollOffset,
+    required double maxOffset,
+  }) = _ScrollInfo;
 
-  int get id {
-    return _id;
-  }
-
-  double get scrollOffset {
-    return _scrollOffset;
-  }
-
-  double get maxOffset {
-    return _maxOffset;
-  }
-
-  ScrollInfo.fromJson(Map<String, dynamic> json)
-      : _id = json['id'],
-        _scrollOffset = json['scrollOffset'],
-        _maxOffset = json['maxOffset'];
-
-  Map<String, dynamic> toJson() { 
-    Map<String, dynamic> map = new Map();
-    map["id"] = this.id;
-    map["scrollOffset"] = this.scrollOffset;
-    map["maxOffset"] = this.maxOffset;
-
-    return map;
-  }
+  factory ScrollInfo.fromJson(Map<String, dynamic> json) =>
+      _$ScrollInfoFromJson(json);
 }

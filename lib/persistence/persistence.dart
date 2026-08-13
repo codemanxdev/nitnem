@@ -21,26 +21,24 @@ Future<AppOptions> loadOptionsFromPrefs() async {
       dynamic prefs = json.decode(optionsString);
 
       options = options.copyWith(
-        themeName: prefs[SharedPrefKeys.THEME_NAME],
-        bold: prefs[SharedPrefKeys.BOLD],
-        showStatus: prefs[SharedPrefKeys.SHOW_STATUS],
-        textScaleValue: prefs[SharedPrefKeys.TEXT_SCALE_VALUE],
-        languageName: prefs[SharedPrefKeys.LANGUAGE_NAME],
-        screenAwake: prefs[SharedPrefKeys.SCREEN_AWAKE],
-        saveScrollPosition: prefs[SharedPrefKeys.SAVE_SCROLL_POSITION],
+        themeName: prefs[SharedPrefKeys.THEME_NAME]?.toString() ?? options.themeName,
+        bold: prefs[SharedPrefKeys.BOLD] ?? options.bold,
+        showStatus: prefs[SharedPrefKeys.SHOW_STATUS] ?? options.showStatus,
+        textScaleValue: (prefs[SharedPrefKeys.TEXT_SCALE_VALUE] as num?)?.toDouble() ?? options.textScaleValue,
+        languageName: prefs[SharedPrefKeys.LANGUAGE_NAME]?.toString() ?? options.languageName,
+        screenAwake: prefs[SharedPrefKeys.SCREEN_AWAKE] ?? options.screenAwake,
+        saveScrollPosition: prefs[SharedPrefKeys.SAVE_SCROLL_POSITION] ?? options.saveScrollPosition,
         scrollOffset: constructScrollPosMap(
           prefs[SharedPrefKeys.SCROLL_OFFSET],
         ),
-        baaniOrderedIds: prefs[SharedPrefKeys.BAANI_ORDERED_IDS],
-        readingSessions: (prefs[SharedPrefKeys.READING_SESSIONS] as List?)
-            ?.map((s) => ReadingSession.fromJson(s))
-            .toList() ?? [],
+        baaniOrderedIds: _parseBaaniOrderedIds(prefs[SharedPrefKeys.BAANI_ORDERED_IDS]) ?? options.baaniOrderedIds,
+        readingSessions: _parseReadingSessions(prefs[SharedPrefKeys.READING_SESSIONS]),
         dailyGoalMinutes: prefs[SharedPrefKeys.DAILY_GOAL_MINUTES] ?? 20,
         totalReadingDuration: prefs[SharedPrefKeys.TOTAL_READING_DURATION] ?? 0,
         totalSessionsCount: prefs[SharedPrefKeys.TOTAL_SESSIONS_COUNT] ?? 0,
         currentStreak: prefs[SharedPrefKeys.CURRENT_STREAK] ?? 0,
         lastReadDate: prefs[SharedPrefKeys.LAST_READ_DATE] != null
-            ? DateTime.parse(prefs[SharedPrefKeys.LAST_READ_DATE])
+            ? DateTime.tryParse(prefs[SharedPrefKeys.LAST_READ_DATE].toString())
             : null,
       );
     } on Exception catch (ex) {
@@ -67,26 +65,63 @@ void saveOptionsToPrefs(AppOptions options) async {
   printInfoMessage('[OPTIONS SAVED]');
 }
 
-Map<String, ScrollInfo> constructScrollPosMap(String scrollPosString) {
-  Map<String, dynamic> rawInfo;
-  Map<String, ScrollInfo> scrollInfo = new Map<String, ScrollInfo>();
+List<dynamic>? _parseBaaniOrderedIds(dynamic data) {
+  if (data is List) return data;
+  if (data is String && data.isNotEmpty) {
+    try {
+      return json.decode(data) as List;
+    } catch (_) {}
+  }
+  return null;
+}
 
-  if (scrollPosString != '') {
-    //Raw data contains maps, convert map info into ScrollInfo
-    rawInfo = json.decode(scrollPosString);
-    rawInfo.forEach(
-      (k, v) => scrollInfo.putIfAbsent(
-        k,
-        () => new ScrollInfo(v["id"], v["scrollOffset"], v["maxOffset"]),
-      ),
-    );
-  } else {
-    scrollInfo = new Map.fromIterable(
+List<ReadingSession> _parseReadingSessions(dynamic data) {
+  List? list;
+  if (data is List) {
+    list = data;
+  } else if (data is String && data.isNotEmpty) {
+    try {
+      list = json.decode(data) as List;
+    } catch (_) {}
+  }
+
+  if (list == null) return [];
+
+  return list
+      .map((s) => ReadingSession.fromJson(s as Map<String, dynamic>))
+      .toList();
+}
+
+Map<String, ScrollInfo> constructScrollPosMap(dynamic scrollPosData) {
+  if (scrollPosData == null || (scrollPosData is String && scrollPosData.isEmpty)) {
+    return Map.fromIterable(
       PathTileData.items,
       key: (v) => v.id.toString(),
-      value: (v) => new ScrollInfo(v.id, 0.0, 0.0),
+      value: (v) => ScrollInfo(
+        id: v.id,
+        scrollOffset: 0.0,
+        maxOffset: 0.0,
+      ),
     );
   }
+
+  Map<String, dynamic> rawInfo;
+  if (scrollPosData is String) {
+    rawInfo = json.decode(scrollPosData);
+  } else if (scrollPosData is Map) {
+    rawInfo = Map<String, dynamic>.from(scrollPosData);
+  } else {
+    return constructScrollPosMap(null);
+  }
+
+  Map<String, ScrollInfo> scrollInfo = {};
+  rawInfo.forEach(
+    (k, v) {
+      if (v is Map) {
+        scrollInfo[k] = ScrollInfo.fromJson(Map<String, dynamic>.from(v));
+      }
+    },
+  );
 
   return scrollInfo;
 }
