@@ -2,27 +2,72 @@ import 'package:nitnem/models/pathtile.dart';
 
 class PathTileData {
   static List<PathTile> items = <PathTile>[
-    new PathTile(1, 'Japji Sahib', 'jpujI swihb', 'japji_sahib'),
-    new PathTile(2, 'Jaap Sahib', 'jwpu swihb', 'jaap_sahib'),
-    new PathTile(3, 'Chaupai Sahib', 'cOpeI swihb', 'chaupai_sahib'),
-    new PathTile(4, 'Anand Sahib', 'Anµdu swihb', 'anand_sahib'),
-    new PathTile(5, 'Rehras Sahib', 'rhrwis swihb', 'rehraas_sahib'),
-    new PathTile(
-      6,
-      'Tav-Prasad Savaiye',
-      'qÍ pRswid sv`X',
-      'tavprasad_savaiye',
+    const PathTile(
+      id: 1,
+      title: 'Japji Sahib',
+      gurmukhi: 'jpujI swihb',
+      filePrefix: 'japji_sahib',
     ),
-    new PathTile(7, 'Ardas', 'Ardws', 'ardas'),
-    new PathTile(8, 'Sukhmani Sahib', 'suKmnI swihb', 'sukhmani_sahib'),
-    new PathTile(
-      9,
-      'Dukh Bhanjani Sahib',
-      'duK BMjnI swihb',
-      'dukh_bhanjani_sahib',
+    const PathTile(
+      id: 2,
+      title: 'Jaap Sahib',
+      gurmukhi: 'jwpu swihb',
+      filePrefix: 'jaap_sahib',
     ),
-    new PathTile(10, 'Sohila Sahib', 'soihlw swihb', 'sohila_sahib'),
-    new PathTile(11, 'Aarti', 'AwrqI', 'aarti_aarta'),
+    const PathTile(
+      id: 3,
+      title: 'Chaupai Sahib',
+      gurmukhi: 'cOpeI swihb',
+      filePrefix: 'chaupai_sahib',
+    ),
+    const PathTile(
+      id: 4,
+      title: 'Anand Sahib',
+      gurmukhi: 'Anµdu swihb',
+      filePrefix: 'anand_sahib',
+    ),
+    const PathTile(
+      id: 5,
+      title: 'Rehras Sahib',
+      gurmukhi: 'rhrwis swihb',
+      filePrefix: 'rehraas_sahib',
+    ),
+    const PathTile(
+      id: 6,
+      title: 'Tav-Prasad Savaiye',
+      gurmukhi: 'qÍ pRswid sv`X',
+      filePrefix: 'tavprasad_savaiye',
+    ),
+    const PathTile(
+      id: 7,
+      title: 'Ardas',
+      gurmukhi: 'Ardws',
+      filePrefix: 'ardas',
+    ),
+    const PathTile(
+      id: 8,
+      title: 'Sukhmani Sahib',
+      gurmukhi: 'suKmnI swihb',
+      filePrefix: 'sukhmani_sahib',
+    ),
+    const PathTile(
+      id: 9,
+      title: 'Dukh Bhanjani Sahib',
+      gurmukhi: 'duK BMjnI swihb',
+      filePrefix: 'dukh_bhanjani_sahib',
+    ),
+    const PathTile(
+      id: 10,
+      title: 'Sohila Sahib',
+      gurmukhi: 'soihlw swihb',
+      filePrefix: 'sohila_sahib',
+    ),
+    const PathTile(
+      id: 11,
+      title: 'Aarti',
+      gurmukhi: 'AwrqI',
+      filePrefix: 'aarti_aarta',
+    ),
   ];
 
   static List<dynamic> defaultOrderIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];

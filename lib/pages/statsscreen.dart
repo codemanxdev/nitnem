@@ -1,38 +1,51 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:nitnem/models/readingsession.dart';
-import 'package:nitnem/state/appstate.dart';
-import 'package:redux/redux.dart';
+import 'package:nitnem/providers/settings_provider.dart';
 
 enum StatsRange { week, month, year }
 
-class StatsScreen extends StatefulWidget {
+class StatsScreen extends ConsumerStatefulWidget {
   const StatsScreen({super.key});
 
   @override
-  State<StatsScreen> createState() => _StatsScreenState();
+  ConsumerState<StatsScreen> createState() => _StatsScreenState();
 }
 
-class _StatsScreenState extends State<StatsScreen> {
+class _StatsScreenState extends ConsumerState<StatsScreen> {
   StatsRange _selectedRange = StatsRange.week;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return StoreConnector<AppState, _ViewModel>(
-      converter: _ViewModel.fromStore,
-      builder: (context, vm) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: theme.primaryColor,
-            iconTheme: theme.primaryIconTheme,
-            title: const Text('Activity'),
-            centerTitle: true,
-            titleTextStyle: theme.appBarTheme.titleTextStyle,
-          ),
-          body: SafeArea(
+    final settingsAsync = ref.watch(settingsProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: theme.primaryColor,
+        iconTheme: theme.primaryIconTheme,
+        title: const Text('Activity'),
+        centerTitle: true,
+        titleTextStyle: theme.appBarTheme.titleTextStyle,
+      ),
+      body: settingsAsync.when(
+        data: (settings) {
+          final now = DateTime.now();
+          final today = DateTime(now.year, now.month, now.day);
+          final todayDurationSeconds = settings.readingSessions
+              .where((s) =>
+                  s.startTime.year == today.year &&
+                  s.startTime.month == today.month &&
+                  s.startTime.day == today.day)
+              .fold(0, (sum, s) => sum + s.durationSeconds);
+
+          final todayMinutes = todayDurationSeconds / 60.0;
+          final progress =
+              (todayMinutes / settings.dailyGoalMinutes).clamp(0.0, 1.0);
+
+          return SafeArea(
             bottom: true,
             child: SingleChildScrollView(
               child: Padding(
@@ -40,36 +53,44 @@ class _StatsScreenState extends State<StatsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildGoalAndStreak(context, vm),
+                    _buildGoalAndStreak(context, progress, todayMinutes,
+                        settings.dailyGoalMinutes, settings.currentStreak),
                     const SizedBox(height: 24),
-                    _buildSummaryCards(context, vm),
+                    _buildSummaryCards(context, settings.totalReadingDuration,
+                        settings.totalSessionsCount),
                     const SizedBox(height: 32),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Activity',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         _buildRangeSelector(theme),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildChart(context, vm),
+                    _buildChart(context, settings.readingSessions),
                     const SizedBox(height: 32),
                     const Text(
                       'Recent Sessions',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    _buildRecentSessions(context, vm),
+                    _buildRecentSessions(context, settings.readingSessions),
                   ],
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => const Center(
+          child: Icon(Icons.error_outline, color: Colors.grey),
+        ),
+      ),
     );
   }
 
@@ -95,10 +116,9 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Widget _buildGoalAndStreak(BuildContext context, _ViewModel vm) {
+  Widget _buildGoalAndStreak(BuildContext context, double progress,
+      double todayMinutes, int dailyGoalMinutes, int currentStreak) {
     final theme = Theme.of(context);
-    final todayMinutes = vm.todayDurationSeconds / 60.0;
-    final progress = (todayMinutes / vm.dailyGoalMinutes).clamp(0.0, 1.0);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -123,7 +143,8 @@ class _StatsScreenState extends State<StatsScreen> {
                       value: progress,
                       strokeWidth: 8,
                       backgroundColor: theme.primaryColor.withValues(alpha: 0.1),
-                      valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(theme.primaryColor),
                     ),
                     Center(
                       child: Text(
@@ -137,7 +158,7 @@ class _StatsScreenState extends State<StatsScreen> {
               const SizedBox(height: 12),
               const Text('Today\'s Goal', style: TextStyle(fontSize: 12)),
               Text(
-                '${todayMinutes.toInt()} / ${vm.dailyGoalMinutes}m',
+                '${todayMinutes.toInt()} / ${dailyGoalMinutes}m',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
@@ -148,7 +169,7 @@ class _StatsScreenState extends State<StatsScreen> {
               const Text('🔥', style: TextStyle(fontSize: 40)),
               const SizedBox(height: 4),
               Text(
-                '${vm.currentStreak}',
+                '$currentStreak',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -163,14 +184,15 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Widget _buildSummaryCards(BuildContext context, _ViewModel vm) {
+  Widget _buildSummaryCards(
+      BuildContext context, int totalDurationSeconds, int totalSessionsCount) {
     final theme = Theme.of(context);
     return Row(
       children: [
         Expanded(
           child: _StatCard(
             title: 'Total Time',
-            value: '${(vm.totalDurationSeconds / 60).toStringAsFixed(1)}m',
+            value: '${(totalDurationSeconds / 60).toStringAsFixed(1)}m',
             icon: Icons.timer,
             color: theme.primaryColor,
           ),
@@ -179,7 +201,7 @@ class _StatsScreenState extends State<StatsScreen> {
         Expanded(
           child: _StatCard(
             title: 'Sessions',
-            value: '${vm.totalSessionsCount}',
+            value: '$totalSessionsCount',
             icon: Icons.history,
             color: theme.colorScheme.secondary,
           ),
@@ -188,7 +210,7 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Widget _buildChart(BuildContext context, _ViewModel vm) {
+  Widget _buildChart(BuildContext context, List<ReadingSession> sessions) {
     final theme = Theme.of(context);
     final List<FlSpot> spots = [];
     final List<String> labels = [];
@@ -198,11 +220,12 @@ class _StatsScreenState extends State<StatsScreen> {
     if (_selectedRange == StatsRange.week) {
       for (int i = 6; i >= 0; i--) {
         final date = now.subtract(Duration(days: i));
-        final daySessions = vm.sessions.where((s) =>
+        final daySessions = sessions.where((s) =>
             s.startTime.day == date.day &&
             s.startTime.month == date.month &&
             s.startTime.year == date.year);
-        final totalMin = daySessions.fold(0, (sum, s) => sum + s.durationSeconds) / 60.0;
+        final totalMin =
+            daySessions.fold<int>(0, (int sum, ReadingSession s) => sum + s.durationSeconds).toDouble() / 60.0;
         spots.add(FlSpot((6 - i).toDouble(), totalMin));
         labels.add(DateFormat('E').format(date));
       }
@@ -211,10 +234,12 @@ class _StatsScreenState extends State<StatsScreen> {
       for (int i = 5; i >= 0; i--) {
         final groupEnd = now.subtract(Duration(days: i * 5));
         final groupStart = groupEnd.subtract(const Duration(days: 4));
-        final groupSessions = vm.sessions.where((s) =>
-            s.startTime.isAfter(groupStart.subtract(const Duration(seconds: 1))) &&
+        final groupSessions = sessions.where((s) =>
+            s.startTime
+                .isAfter(groupStart.subtract(const Duration(seconds: 1))) &&
             s.startTime.isBefore(groupEnd.add(const Duration(days: 1))));
-        final totalMin = groupSessions.fold(0, (sum, s) => sum + s.durationSeconds) / 60.0;
+        final totalMin =
+            groupSessions.fold<int>(0, (int sum, ReadingSession s) => sum + s.durationSeconds).toDouble() / 60.0;
         spots.add(FlSpot((5 - i).toDouble(), totalMin));
         labels.add('${DateFormat('d/M').format(groupStart)}');
       }
@@ -222,9 +247,10 @@ class _StatsScreenState extends State<StatsScreen> {
       // Last 12 months
       for (int i = 11; i >= 0; i--) {
         final date = DateTime(now.year, now.month - i, 1);
-        final monthSessions = vm.sessions.where((s) =>
+        final monthSessions = sessions.where((s) =>
             s.startTime.month == date.month && s.startTime.year == date.year);
-        final totalMin = monthSessions.fold(0, (sum, s) => sum + s.durationSeconds) / 60.0;
+        final totalMin =
+            monthSessions.fold<int>(0, (int sum, ReadingSession s) => sum + s.durationSeconds).toDouble() / 60.0;
         spots.add(FlSpot((11 - i).toDouble(), totalMin));
         labels.add(DateFormat('MMM').format(date));
       }
@@ -236,15 +262,19 @@ class _StatsScreenState extends State<StatsScreen> {
         LineChartData(
           gridData: const FlGridData(show: false),
           titlesData: FlTitlesData(
-            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 interval: 1,
                 getTitlesWidget: (value, meta) {
-                  if (value.toInt() >= labels.length || value.toInt() < 0) return const SizedBox();
+                  if (value.toInt() >= labels.length || value.toInt() < 0)
+                    return const SizedBox();
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
@@ -279,9 +309,9 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Widget _buildRecentSessions(BuildContext context, _ViewModel vm) {
+  Widget _buildRecentSessions(BuildContext context, List<ReadingSession> sessions) {
     final theme = Theme.of(context);
-    if (vm.sessions.isEmpty) {
+    if (sessions.isEmpty) {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(32.0),
@@ -290,7 +320,7 @@ class _StatsScreenState extends State<StatsScreen> {
       );
     }
 
-    final reversedSessions = vm.sessions.reversed.toList();
+    final reversedSessions = sessions.reversed.toList();
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -301,7 +331,8 @@ class _StatsScreenState extends State<StatsScreen> {
           leading: Icon(Icons.menu_book, color: theme.primaryColor),
           title: Text(session.pathTitle),
           subtitle: Text(DateFormat('MMM d, h:mm a').format(session.startTime)),
-          trailing: Text('${(session.durationSeconds / 60).toStringAsFixed(1)} min'),
+          trailing:
+              Text('${(session.durationSeconds / 60).toStringAsFixed(1)} min'),
         );
       },
     );
@@ -352,49 +383,4 @@ class _StatCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ViewModel {
-  final List<ReadingSession> sessions;
-  final int totalDurationSeconds;
-  final int totalSessionsCount;
-  final int todayDurationSeconds;
-  final int currentStreak;
-  final int dailyGoalMinutes;
-
-  _ViewModel({
-    required this.sessions,
-    required this.totalDurationSeconds,
-    required this.totalSessionsCount,
-    required this.todayDurationSeconds,
-    required this.currentStreak,
-    required this.dailyGoalMinutes,
-  });
-
-  static _ViewModel fromStore(Store<AppState> store) {
-    final sessions = store.state.options.readingSessions;
-    final totalDuration = store.state.options.totalReadingDuration;
-    final totalCount = store.state.options.totalSessionsCount;
-    
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    
-    final todayDuration = sessions
-        .where((s) => 
-            s.startTime.year == today.year && 
-            s.startTime.month == today.month && 
-            s.startTime.day == today.day)
-        .fold(0, (sum, s) => sum + s.durationSeconds);
-
-    return _ViewModel(
-      sessions: sessions,
-      totalDurationSeconds: totalDuration,
-      totalSessionsCount: totalCount,
-      todayDurationSeconds: todayDuration,
-      currentStreak: store.state.options.currentStreak,
-      dailyGoalMinutes: store.state.options.dailyGoalMinutes,
-    );
-  }
-
-  // Removed old _calculateStreak helper as it's now in Redux state
 }

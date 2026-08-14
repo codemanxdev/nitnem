@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nitnem/navigation/approute.dart';
 import 'package:nitnem/pages/about.dart';
 import 'package:nitnem/pages/baaniorderscreen.dart';
@@ -9,32 +9,30 @@ import 'package:nitnem/pages/options.dart';
 import 'package:nitnem/pages/readerscreen.dart';
 import 'package:nitnem/pages/splashscreen.dart';
 import 'package:nitnem/pages/statsscreen.dart';
-import 'package:nitnem/redux/selectors/selectors.dart';
-import 'package:nitnem/state/appstate.dart';
-import 'package:redux/redux.dart';
+import 'package:nitnem/providers/settings_provider.dart';
 
 import 'models/themes.dart';
 
-class NitnemApp extends StatelessWidget {
-  final Store<AppState> store;
+class NitnemApp extends ConsumerWidget {
   final _optionsPageKey = GlobalKey();
   final _homeScreenKey = GlobalKey();
   final _readerScreenKey = GlobalKey();
   final _orderScreenKey = GlobalKey();
   final _statsScreenKey = GlobalKey();
 
-  NitnemApp(this.store);
+  NitnemApp();
 
   @override
-  Widget build(BuildContext context) {
-    return StoreProvider<AppState>(
-      store: store,
-      child: new StoreConnector<AppState, _ViewModel>(
-        converter: _ViewModel.fromStore,
-        builder: (context, vm) => MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settingsAsync = ref.watch(settingsProvider);
+
+    return settingsAsync.when(
+      data: (settings) {
+        final themeData = getThemeByName(settings.themeName).data;
+        return MaterialApp(
           title: 'Nitnem App',
           debugShowCheckedModeBanner: false,
-          theme: getThemeByName(vm.themeName).data,
+          theme: themeData,
           color: Colors.grey,
           home: SplashScreen(),
           routes: _buildRoutes(),
@@ -42,13 +40,23 @@ class NitnemApp extends StatelessWidget {
             return Directionality(
               child: CupertinoTheme(
                 data: CupertinoThemeData(
-                  brightness: getThemeByName(vm.themeName).data.brightness,
+                  brightness: themeData.brightness,
                 ),
                 child: child!,
               ),
               textDirection: TextDirection.ltr,
             );
           },
+        );
+      },
+      loading: () => const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      ),
+      error: (err, stack) => const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Icon(Icons.error_outline, color: Colors.grey, size: 48),
+          ),
         ),
       ),
     );
@@ -96,30 +104,5 @@ class NitnemApp extends StatelessWidget {
       ),
     ];
     return routes;
-  }
-}
-
-class _ViewModel {
-  final String themeName;
-
-  _ViewModel({required this.themeName});
-
-  static _ViewModel fromStore(Store<AppState> store) {
-    return _ViewModel(themeName: themeSelector(store.state));
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _ViewModel &&
-          runtimeType == other.runtimeType &&
-          themeName == other.themeName;
-
-  @override
-  int get hashCode => themeName.hashCode;
-
-  @override
-  String toString() {
-    return '_ViewModel{themeName: $themeName}';
   }
 }
