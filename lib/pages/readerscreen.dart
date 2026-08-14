@@ -53,6 +53,7 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
     _startScrollPosUpdateTimer();
     _controller.addListener(() {
       printInfoMessage('[SCROLL] offset=${_controller.offset}');
+      _updateTopButtonVisibility();
     });
   }
 
@@ -114,20 +115,17 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
 
   void _updateTopButtonVisibility() {
     if (_controller.hasClients && _controller.position.maxScrollExtent > 0.0) {
-      setState(() {
-        _topButtonVisible =
-            _controller.offset == _controller.position.maxScrollExtent;
-      });
+      final bool shouldBeVisible = _controller.offset >= _controller.position.maxScrollExtent;
+      if (_topButtonVisible != shouldBeVisible) {
+        setState(() {
+          _topButtonVisible = shouldBeVisible;
+        });
+      }
     }
   }
 
-  String _calculateScrollPerc(double offset, double maxoffset) {
-    final double scrollPerc =
-        (offset != 0.0) ? (offset / maxoffset) * 100 : 0.0;
-    return scrollPerc.toStringAsFixed(2);
-  }
-
   _navigateToScrollPositionOnLoad() {
+    printInfoMessage('[NAV_TO_SAVED] firing, current offset=${_controller.hasClients ? _controller.offset : "n/a"}');
     final readerState = ref.read(readerProvider);
     final settings = ref.read(settingsProvider).value;
 
@@ -169,7 +167,6 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
   }
 
   _onEndScroll(ScrollMetrics metrics) {
-    _updateTopButtonVisibility();
     _updateScrollPositionInStatusBar();
   }
 
@@ -237,14 +234,16 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
     final bool isDark = theme.brightness == Brightness.dark;
 
     // Use select to watch ONLY what we need for the UI.
-    // Do NOT watch the whole settingsProvider, otherwise scroll updates will trigger a rebuild!
     final themeName = ref.watch(settingsProvider.select((s) => s.value?.themeName ?? 'Default'));
     final isBold = ref.watch(settingsProvider.select((s) => s.value?.bold ?? false));
     final showStatus = ref.watch(settingsProvider.select((s) => s.value?.showStatus ?? false));
     final textScaleValue = ref.watch(settingsProvider.select((s) => s.value?.textScaleValue ?? 1.0));
     final languageName = ref.watch(settingsProvider.select((s) => s.value?.languageName ?? 'English'));
 
-    final readerState = ref.watch(readerProvider);
+    // Granular selection for reader state
+    final pathTitle = ref.watch(readerProvider.select((s) => s.pathTitle));
+    final showReaderOptions = ref.watch(readerProvider.select((s) => s.showReaderOptions));
+
     final pathDataAsync = ref.watch(pathDataProvider);
 
     printInfoMessage('[BUILD] ReaderScreen');
@@ -298,17 +297,17 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
                     pinned: false,
                     snap: false,
                     floating: true,
-                    expandedHeight: readerState.showReaderOptions
+                    expandedHeight: showReaderOptions
                         ? AppConstants.EXPANDED_APP_BAR
                         : kToolbarHeight,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        (readerState.showReaderOptions)
+                        (showReaderOptions)
                             ? AppConstants.EMPTY_STRING
-                            : readerState.pathTitle,
+                            : pathTitle,
                         style: theme.appBarTheme.titleTextStyle,
                       ),
-                      background: readerState.showReaderOptions
+                      background: showReaderOptions
                           ? OptionsPage(
                               readerMode: true,
                               key: _optionsKey,
@@ -367,97 +366,9 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
           ),
         ),
         bottomNavigationBar: showStatus
-            ? Container(
-                color: Colors.black, // Background for system navigation bar area
-                child: MediaQuery(
-                  data: MediaQuery.of(
-                    context,
-                  ).copyWith(textScaler: TextScaler.linear(1.0)),
-                  child: SafeArea(
-                    top: false,
-                    child: new Container(
-                      height: 30.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(
-                          AppConstants.STATUSBAR_PADDING,
-                        ),
-                        child: new Row(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 1,
-                              child: new Row(
-                                children: <Widget>[
-                                  (defaultTargetPlatform ==
-                                          TargetPlatform.android)
-                                      ? Icon(Icons.battery_std, size: 12, color: theme.iconTheme.color)
-                                      : Container(),
-                                  Text(
-                                    _batteryLevel + "%",
-                                    textAlign: TextAlign.left,
-                                    style: new TextStyle(
-                                      fontFamily:
-                                          AppConstants.STATUSBAR_FONT_FAMILY,
-                                      fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                      fontWeight: FontWeight.normal,
-                                      color: theme.textTheme.bodySmall?.color,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                _currentTime,
-                                textAlign: TextAlign.left,
-                                style: new TextStyle(
-                                  fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
-                                  fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                  fontWeight: FontWeight.normal,
-                                  color: theme.textTheme.bodySmall?.color,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 5,
-                              child: Text(
-                                readerState.pathTitle,
-                                textAlign: TextAlign.center,
-                                style: new TextStyle(
-                                  fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
-                                  fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                  fontWeight: FontWeight.normal,
-                                  color: theme.textTheme.bodySmall?.color,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: (defaultTargetPlatform ==
-                                      TargetPlatform.android)
-                                  ? 1
-                                  : 2,
-                              child: Text(
-                                _calculateScrollPerc(
-                                      readerState.scrollOffset,
-                                      readerState.maxOffset,
-                                    ) +
-                                    "%",
-                                textAlign: TextAlign.center,
-                                style: new TextStyle(
-                                  fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
-                                  fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                  fontWeight: FontWeight.normal,
-                                  color: theme.textTheme.bodySmall?.color,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      color: theme.primaryColor,
-                    ),
-                  ),
-                ),
+            ? _ReaderBottomBar(
+                batteryLevel: _batteryLevel,
+                currentTime: _currentTime,
               )
             : null,
         floatingActionButton: Visibility(
@@ -491,5 +402,120 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
     _batteryTimer?.cancel();
     _scrollPosTimer?.cancel();
     super.dispose();
+  }
+}
+
+class _ReaderBottomBar extends ConsumerWidget {
+  final String batteryLevel;
+  final String currentTime;
+
+  const _ReaderBottomBar({
+    required this.batteryLevel,
+    required this.currentTime,
+  });
+
+  String _calculateScrollPerc(double offset, double maxoffset) {
+    final double scrollPerc =
+        (offset != 0.0) ? (offset / maxoffset) * 100 : 0.0;
+    return scrollPerc.toStringAsFixed(2);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final pathTitle = ref.watch(readerProvider.select((s) => s.pathTitle));
+    final scrollOffset = ref.watch(readerProvider.select((s) => s.scrollOffset));
+    final maxOffset = ref.watch(readerProvider.select((s) => s.maxOffset));
+
+    return Container(
+      color: Colors.black, // Background for system navigation bar area
+      child: MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(1.0)),
+        child: SafeArea(
+          top: false,
+          child: new Container(
+            height: 30.0,
+            child: Padding(
+              padding: const EdgeInsets.all(
+                AppConstants.STATUSBAR_PADDING,
+              ),
+              child: new Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: new Row(
+                      children: <Widget>[
+                        (defaultTargetPlatform == TargetPlatform.android)
+                            ? Icon(Icons.battery_std,
+                                size: 12, color: theme.iconTheme.color)
+                            : Container(),
+                        Text(
+                          batteryLevel + "%",
+                          textAlign: TextAlign.left,
+                          style: new TextStyle(
+                            fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
+                            fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                            fontWeight: FontWeight.normal,
+                            color: theme.textTheme.bodySmall?.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      currentTime,
+                      textAlign: TextAlign.left,
+                      style: new TextStyle(
+                        fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
+                        fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                        fontWeight: FontWeight.normal,
+                        color: theme.textTheme.bodySmall?.color,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 5,
+                    child: Text(
+                      pathTitle,
+                      textAlign: TextAlign.center,
+                      style: new TextStyle(
+                        fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
+                        fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                        fontWeight: FontWeight.normal,
+                        color: theme.textTheme.bodySmall?.color,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: (defaultTargetPlatform == TargetPlatform.android)
+                        ? 1
+                        : 2,
+                    child: Text(
+                      _calculateScrollPerc(
+                            scrollOffset,
+                            maxOffset,
+                          ) +
+                          "%",
+                      textAlign: TextAlign.center,
+                      style: new TextStyle(
+                        fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
+                        fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                        fontWeight: FontWeight.normal,
+                        color: theme.textTheme.bodySmall?.color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            color: theme.primaryColor,
+          ),
+        ),
+      ),
+    );
   }
 }
