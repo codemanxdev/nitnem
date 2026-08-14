@@ -149,14 +149,21 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
         _controller.hasClients ? _controller.position.maxScrollExtent : 0.0;
     final double offset = _controller.hasClients ? _controller.offset : 0.0;
 
-    ref.read(readerProvider.notifier).updateOffsets(offset, maxOffset);
+    // Use microtask to avoid modifying providers during build/layout
+    Future.microtask(() {
+      if (!mounted) return;
+      ref.read(readerProvider.notifier).updateOffsets(offset, maxOffset);
 
-    final settings = ref.read(settingsProvider).value;
-    if (settings != null) {
-      ref.read(settingsProvider.notifier).updateScrollOffset(
-            ScrollInfo(id: readerState.pathId, scrollOffset: offset, maxOffset: maxOffset),
-          );
-    }
+      final settings = ref.read(settingsProvider).value;
+      if (settings != null) {
+        ref.read(settingsProvider.notifier).updateScrollOffset(
+              ScrollInfo(
+                  id: readerState.pathId,
+                  scrollOffset: offset,
+                  maxOffset: maxOffset),
+            );
+      }
+    });
   }
 
   _onEndScroll(ScrollMetrics metrics) {
@@ -353,88 +360,95 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
           ),
         ),
         bottomNavigationBar: settings.showStatus
-            ? MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: TextScaler.linear(1.0)),
-                child: SafeArea(
-                  top: false,
-                  child: new Container(
-                    height: 30.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(
-                        AppConstants.STATUSBAR_PADDING,
-                      ),
-                      child: new Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 1,
-                            child: new Row(
-                              children: <Widget>[
-                                (defaultTargetPlatform ==
-                                        TargetPlatform.android)
-                                    ? Icon(Icons.battery_std, size: 12)
-                                    : Container(),
-                                Text(
-                                  _batteryLevel + "%",
-                                  textAlign: TextAlign.left,
-                                  style: new TextStyle(
-                                    fontFamily:
-                                        AppConstants.STATUSBAR_FONT_FAMILY,
-                                    fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                    fontWeight: FontWeight.normal,
+            ? Container(
+                color: Colors.black, // Background for system navigation bar area
+                child: MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(textScaler: TextScaler.linear(1.0)),
+                  child: SafeArea(
+                    top: false,
+                    child: new Container(
+                      height: 30.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(
+                          AppConstants.STATUSBAR_PADDING,
+                        ),
+                        child: new Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 1,
+                              child: new Row(
+                                children: <Widget>[
+                                  (defaultTargetPlatform ==
+                                          TargetPlatform.android)
+                                      ? Icon(Icons.battery_std, size: 12, color: theme.iconTheme.color)
+                                      : Container(),
+                                  Text(
+                                    _batteryLevel + "%",
+                                    textAlign: TextAlign.left,
+                                    style: new TextStyle(
+                                      fontFamily:
+                                          AppConstants.STATUSBAR_FONT_FAMILY,
+                                      fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                                      fontWeight: FontWeight.normal,
+                                      color: theme.textTheme.bodySmall?.color,
+                                    ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                _currentTime,
+                                textAlign: TextAlign.left,
+                                style: new TextStyle(
+                                  fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
+                                  fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                                  fontWeight: FontWeight.normal,
+                                  color: theme.textTheme.bodySmall?.color,
                                 ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              _currentTime,
-                              textAlign: TextAlign.left,
-                              style: new TextStyle(
-                                fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
-                                fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                fontWeight: FontWeight.normal,
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 5,
-                            child: Text(
-                              readerState.pathTitle,
-                              textAlign: TextAlign.center,
-                              style: new TextStyle(
-                                fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
-                                fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                fontWeight: FontWeight.normal,
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                readerState.pathTitle,
+                                textAlign: TextAlign.center,
+                                style: new TextStyle(
+                                  fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
+                                  fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                                  fontWeight: FontWeight.normal,
+                                  color: theme.textTheme.bodySmall?.color,
+                                ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: (defaultTargetPlatform ==
-                                    TargetPlatform.android)
-                                ? 1
-                                : 2,
-                            child: Text(
-                              _calculateScrollPerc(
-                                    readerState.scrollOffset,
-                                    readerState.maxOffset,
-                                  ) +
-                                  "%",
-                              textAlign: TextAlign.center,
-                              style: new TextStyle(
-                                fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
-                                fontSize: AppConstants.STATUSBAR_FONT_SIZE,
-                                fontWeight: FontWeight.normal,
+                            Expanded(
+                              flex: (defaultTargetPlatform ==
+                                      TargetPlatform.android)
+                                  ? 1
+                                  : 2,
+                              child: Text(
+                                _calculateScrollPerc(
+                                      readerState.scrollOffset,
+                                      readerState.maxOffset,
+                                    ) +
+                                    "%",
+                                textAlign: TextAlign.center,
+                                style: new TextStyle(
+                                  fontFamily: AppConstants.STATUSBAR_FONT_FAMILY,
+                                  fontSize: AppConstants.STATUSBAR_FONT_SIZE,
+                                  fontWeight: FontWeight.normal,
+                                  color: theme.textTheme.bodySmall?.color,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                      color: theme.primaryColor,
                     ),
-                    color: AppConstants.STATUSBAR_BACK_COLOR,
                   ),
                 ),
               )

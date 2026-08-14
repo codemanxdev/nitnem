@@ -49,7 +49,6 @@ class AppConstants {
   static const double STATUSBAR_PADDING = 2.0;
   static const double STATUSBAR_FONT_SIZE = 11.0;
   static const double STATUSBAR_FONT_SIZE_SMALL = 9.0;
-  static const Color STATUSBAR_BACK_COLOR = Colors.grey;
   static const String STATUSBAR_FONT_FAMILY = 'Roboto';
   static const int STATUS_TIME_UPDATE_INTERVAL_SECONDS = 60;
 
