@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:nitnem/common/printmessage.dart';
@@ -51,8 +50,10 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
     _startBatteryUpdateTimer();
     _updateBatteryLevel();
     _updateCurrentTime();
-
     _startScrollPosUpdateTimer();
+    _controller.addListener(() {
+      printInfoMessage('[SCROLL] offset=${_controller.offset}');
+    });
   }
 
   @override
@@ -101,6 +102,7 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
   }
 
   void _updateCurrentTime() {
+    printInfoMessage('[TIMER TICK] rebuilding ReaderScreen, controller.offset=${_controller.hasClients ? _controller.offset : "n/a"}');
     DateTime dateTime = DateTime.now();
     final timeFormatter = DateFormat('HH:mm a');
     final formattedTime = timeFormatter.format(dateTime);
@@ -234,11 +236,16 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
     final ThemeData theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
 
-    final settings = ref.watch(settingsProvider).value;
+    // Use select to watch ONLY what we need for the UI.
+    // Do NOT watch the whole settingsProvider, otherwise scroll updates will trigger a rebuild!
+    final themeName = ref.watch(settingsProvider.select((s) => s.value?.themeName ?? 'Default'));
+    final isBold = ref.watch(settingsProvider.select((s) => s.value?.bold ?? false));
+    final showStatus = ref.watch(settingsProvider.select((s) => s.value?.showStatus ?? false));
+    final textScaleValue = ref.watch(settingsProvider.select((s) => s.value?.textScaleValue ?? 1.0));
+    final languageName = ref.watch(settingsProvider.select((s) => s.value?.languageName ?? 'English'));
+
     final readerState = ref.watch(readerProvider);
     final pathDataAsync = ref.watch(pathDataProvider);
-
-    if (settings == null) return const SizedBox.shrink();
 
     printInfoMessage('[BUILD] ReaderScreen');
     printInfoMessage('[STATE] Battery: $_batteryLevel, Time: $_currentTime');
@@ -263,7 +270,7 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
                 BlendMode.dstATop,
               ),
               image: new AssetImage(
-                "assets/themes/${settings.themeName}.jpg",
+                "assets/themes/$themeName.jpg",
               ),
               repeat: ImageRepeat.repeat,
             ),
@@ -318,7 +325,7 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
                         child: MediaQuery(
                           data: MediaQuery.of(context).copyWith(
                             textScaler: TextScaler.linear(
-                              settings.textScaleValue,
+                              textScaleValue,
                             ),
                           ),
                           child: pathDataAsync.when(
@@ -328,12 +335,12 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
                               style: new TextStyle(
                                 height: 2.0,
                                 fontFamily: getLanguageMenuItemValueByName(
-                                  settings.languageName,
+                                  languageName,
                                 ).fontName,
                                 fontSize: getLanguageMenuItemValueByName(
-                                  settings.languageName,
+                                  languageName,
                                 ).fontSize,
-                                fontWeight: (settings.bold)
+                                fontWeight: isBold
                                     ? FontWeight.bold
                                     : FontWeight.normal,
                               ),
@@ -359,7 +366,7 @@ class _MyReaderPageState extends ConsumerState<ReaderScreen>
             ),
           ),
         ),
-        bottomNavigationBar: settings.showStatus
+        bottomNavigationBar: showStatus
             ? Container(
                 color: Colors.black, // Background for system navigation bar area
                 child: MediaQuery(
