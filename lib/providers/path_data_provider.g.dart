@@ -40,4 +40,4 @@ final class PathDataProvider
   }
 }
 
-String _$pathDataHash() => r'bb9919355042e792c686c925b72bf1127fe5c62f';
+String _$pathDataHash() => r'65a0f0464d2b1c9331c1be8fb2718a1c18b65274';

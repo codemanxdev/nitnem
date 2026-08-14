@@ -8,7 +8,7 @@ import '../constants/sharedprefkeys.dart';
 import '../data/pathtiledata.dart';
 import '../models/readingsession.dart';
 import '../models/scrollinfo.dart';
-import '../state/appoptions.dart';
+import '../models/appoptions.dart';
 
 Future<AppOptions> loadOptionsFromPrefs() async {
   AppOptions options = AppOptions.initial();

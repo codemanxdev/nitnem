@@ -5,7 +5,7 @@ import 'package:nitnem/app.dart';
 import 'package:nitnem/pages/readerscreen.dart';
 import 'package:nitnem/persistence/persistence.dart';
 import 'package:nitnem/providers/settings_provider.dart';
-import 'package:nitnem/state/appoptions.dart';
+import 'package:nitnem/models/appoptions.dart';
 import 'package:backdrop/backdrop.dart';
 import 'package:device_frame/device_frame.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

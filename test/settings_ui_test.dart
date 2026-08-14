@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nitnem/app.dart';
 import 'package:nitnem/providers/settings_provider.dart';
-import 'package:nitnem/state/appoptions.dart';
+import 'package:nitnem/models/appoptions.dart';
 import 'package:nitnem/providers/reader_provider.dart';
 import 'package:nitnem/providers/path_data_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

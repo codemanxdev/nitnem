@@ -1,4 +1,4 @@
-import 'package:nitnem/state/reader_state.dart';
+import 'package:nitnem/models/reader_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'reader_provider.g.dart';
