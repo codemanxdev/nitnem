@@ -7,6 +7,7 @@ import 'package:nitnem/providers/settings_provider.dart';
 import 'package:nitnem/models/appoptions.dart';
 import 'package:nitnem/providers/reader_provider.dart';
 import 'package:nitnem/providers/path_data_provider.dart';
+import 'package:nitnem/providers/system_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MockSettings extends Settings {
@@ -47,8 +48,11 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           settingsProvider.overrideWith(() => MockSettings(initialOptions.copyWith(themeName: 'ThemeName.Default'))),
+          currentTimeProvider.overrideWith((ref) => Stream.value('12:00 PM')),
+          batteryLevelProvider.overrideWith((ref) => Stream.value(100)),
         ],
       );
+      addTearDown(container.dispose);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
@@ -77,8 +81,11 @@ void main() {
         overrides: [
           settingsProvider.overrideWith(() => MockSettings(initialOptions.copyWith(bold: false))),
           pathDataProvider.overrideWith((ref) => 'Dummy Baani Content'),
+          currentTimeProvider.overrideWith((ref) => Stream.value('12:00 PM')),
+          batteryLevelProvider.overrideWith((ref) => Stream.value(100)),
         ],
       );
+      addTearDown(container.dispose);
       
       // Manually set a path in reader state
       container.read(readerProvider.notifier).setPath(id: 1, title: 'Japji Sahib', filePrefix: 'japji');
@@ -113,8 +120,11 @@ void main() {
         overrides: [
           settingsProvider.overrideWith(() => MockSettings(initialOptions.copyWith(showStatus: false))),
           pathDataProvider.overrideWith((ref) => 'Dummy Baani Content'),
+          currentTimeProvider.overrideWith((ref) => Stream.value('12:00 PM')),
+          batteryLevelProvider.overrideWith((ref) => Stream.value(100)),
         ],
       );
+      addTearDown(container.dispose);
       
       container.read(readerProvider.notifier).setPath(id: 1, title: 'Japji Sahib', filePrefix: 'japji');
 
