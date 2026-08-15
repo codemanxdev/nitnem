@@ -5,10 +5,15 @@ Future<void> main() async {
   await integrationDriver(
     onScreenshot: (String screenshotName, List<int> screenshotBytes,
         [Map<String, dynamic>? args]) async {
-      final File image = File('listing/android-phone/$screenshotName.png');
+      // If screenshotName contains a slash, it's treated as a sub-path
+      final String fullPath = screenshotName.contains('/') 
+          ? 'listing/$screenshotName.png'
+          : 'listing/android-phone/$screenshotName.png';
+          
+      final File image = File(fullPath);
       await image.create(recursive: true);
       await image.writeAsBytes(screenshotBytes);
-      print('Screenshot saved: listing/android-phone/$screenshotName.png');
+      print('Screenshot saved: $fullPath');
       return true;
     },
   );
